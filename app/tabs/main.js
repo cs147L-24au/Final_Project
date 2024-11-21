@@ -9,7 +9,7 @@ import db from "@/database/db";
 import useSession from "@/utils/useSession";
 
 
-export default function Profile() {
+export default function Main() {
   const session = useSession();
   const router = useRouter();
 
@@ -26,12 +26,14 @@ export default function Profile() {
       console.log(err);
     }
   };
+  {/**
+    if (!session) {
+      return <Loading />;
+    } else {
+      console.log(session.user);
+    }
+     */}
 
-  if (!session) {
-    return <Loading />;
-  } else {
-    console.log(session.user);
-  }
 
   return (
     <View style={styles.container}>
@@ -42,10 +44,10 @@ export default function Profile() {
             <Text style={styles.buttonText}>Sign out</Text>
           </TouchableOpacity>
         </View>
-        <Text style={styles.text}>{session.user.email}</Text>
+        { /* <Text style={styles.text}>{session.user.email}</Text> */}
       </View>
       <Text style={[styles.title, styles.postTitle]}>My Posts</Text>
-      <Feed shouldNavigateToComments={false} fetchUsersPostsOnly={true} userid={session.user.id} /> 
+     {/* <Feed shouldNavigateToComments={false} fetchUsersPostsOnly={true} userid={session.user.id} /> */}
     </View>
   );
 }

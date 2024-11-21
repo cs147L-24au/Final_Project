@@ -11,18 +11,16 @@ export default function TabLayout() {
         backgroundColor: theme.colors.backgroundPrimary,
       }
       }}> 
-
-      {/*
+      
       <Tabs.Screen
-        name="index"
+        name="main"
         options={{
           title: 'Home',
           tabBarIcon: ({ size, color }) => 
-            <MaterialCommunityIcons size={size} name="beehive-outline" color={color} />,
+            <MaterialCommunityIcons size={size} name="home" color={color} />,
         }}
-       
       />
-       */}
+       
       <Tabs.Screen
         name="journal"
         options={{
