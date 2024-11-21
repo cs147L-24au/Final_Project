@@ -1,2 +1,1 @@
-# Final_Project
-Yarency, Kurt, Sara
+# MyJourney
