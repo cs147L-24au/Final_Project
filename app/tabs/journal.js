@@ -8,7 +8,7 @@ import Theme from "@/assets/theme";
 import Loading from "@/components/Loading";
 import db from "@/database/db";
 import useSession from "@/utils/useSession";
-import JournalComponent from "@/components/journalComponent";
+import JournalComponent from "@/components/JournalComponent";
 
 /*
 1) want to pass in data from home to journal.
