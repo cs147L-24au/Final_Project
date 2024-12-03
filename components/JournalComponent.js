@@ -23,29 +23,32 @@ export default function JournalComponent({timestamp, entryText}) {
 
 const styles = StyleSheet.create({
     outerBox: {
-        backgroundColor: '#f9f9f9',
-        flexDirection: 'row',
-        paddingHorizontal: 14,
-        alignItems: 'center',
-        height: windowHeight * 0.08, 
+        backgroundColor: '#fff', // Box background color
+        flexDirection: 'column', 
+        height: windowHeight * 0.1      
     },
     timeStampOuter: {
-        flexDirection: 'row',
-        height: windowHeight * 0.5,
+   
+        backgroundColor: '#FFFF', 
+        paddingHorizontal: 8, 
+        paddingVertical: 4, 
+        borderRadius: 4, 
+        alignSelf: 'flex-start',
+        marginBottom: 8
 
     },
     timeStampText: {
         color: '#765ef4',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '500'
     },
     journalEntryOuter: {
-        flexDirection: 'row',
+        flexDirection: 2,
         height: windowHeight * 0.5,
     },
     journalText: {
         color: '#765ef4',
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '500'
     },
   
