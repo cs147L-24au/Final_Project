@@ -8,7 +8,7 @@ import Loading from "@/components/Loading";
 export default function App() {
   const [session, setSession] = useState(null);
   const [isLoading, setIsLoading] = useState(true); // Default to true for initial load
-
+{/*}
   useEffect(() => {
     setIsLoading(true);
 
@@ -26,6 +26,9 @@ export default function App() {
 
     return () => subscription.unsubscribe();
   }, []);
+  */}
+
+
   return <Redirect href="/tabs/journal" />
 }
 {/*}

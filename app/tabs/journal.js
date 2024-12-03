@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, SafeAreaView, View, TouchableOpacity, Alert } from "react-native";
+import { useState, useEffect } from "react";
 
 import { useRouter } from "expo-router";
 
@@ -8,45 +9,38 @@ import Loading from "@/components/Loading";
 import db from "@/database/db";
 import useSession from "@/utils/useSession";
 
+/*
+1) want to pass in data from home to journal.
+the data that I am pulling I want to save as a usestate in Home.js
 
+2)
+for now, display data in journal. but once I have that figured out, we need to 
+display the data in an outer most layer so that it is accessible from both homepage 
+and tabs since we are trying to get to journal page in two ways.
+*/
 export default function Journal() {
-  const session = useSession();
-  const router = useRouter();
+  const [entry, setEntry] = useState(null); // where I will store data
 
-  const signOut = async () => {
+  const fetchData = async () => { // fetching the data
     try {
-      const { error } = await db.auth.signOut();
-      if (error) {
-        Alert.alert(error.message);
-      } else {
-        router.navigate("/");
-        Alert.alert("Sign out successful.");
-      }
+      const data = await db.from('JournalEntry').select('*');
+      console.log("Here are all the fetched entries: ", data);
+      setEntry(data);
     } catch (err) {
-      console.log(err);
+      console.error("Error: failed to setPosts: ", err);
     }
   };
 
-  if (!session) {
-    return <Loading />;
-  } else {
-    console.log(session.user);
-  }
+  useEffect(() => {
+    fetchData();
+  }, []);
+
 
   return (
-    <View style={styles.container}>
-      <View style={styles.userContainer}>
-        <View style={styles.userTextContainer}>
-          <Text style={styles.title}>Logged in as: </Text>
-          <TouchableOpacity onPress={() => signOut()}>
-            <Text style={styles.buttonText}>Sign out</Text>
-          </TouchableOpacity>
-        </View>
-        <Text style={styles.text}>{session.user.email}</Text>
-      </View>
-      <Text style={[styles.title, styles.postTitle]}>My Posts</Text>
-      <Feed shouldNavigateToComments={false} fetchUsersPostsOnly={true} userid={session.user.id} /> 
-    </View>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.title}>journal Page</Text>
+
+    </SafeAreaView>
   );
 }
 

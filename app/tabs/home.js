@@ -1,4 +1,3 @@
-import React from "react";
 import {
   View,
   Text,
@@ -7,15 +6,18 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import db from "@/database/db";
 
 const HomePage = ({ navigation }) => {
+  
+  const [entry, setEntry] = useState(null); // where I will store data
 
-  const fetchData = async () => {
+  const fetchData = async () => { // fetching the data
     try {
       const data = await db.from('JournalEntry').select('*');
-      console.log("Here are all the fetched posts: ", data);
+      console.log("Here are all the fetched entries: ", data);
+      setEntry(data);
     } catch (err) {
       console.error("Error: failed to setPosts: ", err);
     }
