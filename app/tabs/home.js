@@ -7,7 +7,26 @@ import {
   TouchableOpacity,
 } from "react-native";
 
+import { useEffect } from "react";
+import db from "@/database/db";
+
 const HomePage = ({ navigation }) => {
+
+  const fetchData = async () => {
+    try {
+      const data = await db.from('JournalEntry').select('*');
+      console.log("Here are all the fetched posts: ", data);
+    } catch (err) {
+      console.error("Error: failed to setPosts: ", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+  
+
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header Section */}
