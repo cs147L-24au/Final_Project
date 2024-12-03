@@ -1,46 +1,51 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { Tabs } from 'expo-router';
-import { Text, View } from 'react-native';
-import theme from '@/assets/theme';
+import React from "react";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import Home from "./home";
+import Journal from "./journal";
+import Profile from "./profile";
+import Workout from "./workout";
 
-export default function TabLayout() {
+// Commented out the custom fonts for now
+// import { useFonts } from "expo-font";
+// import AppLoading from "expo-app-loading";
+
+const Tab = createBottomTabNavigator();
+
+export default function Layout() {
+  // Placeholder for the fonts logic, commented out for now
+  /*
+  const [fontsLoaded] = useFonts({
+    "Sniglet-ExtraBold": require("../../assets/fonts/Sniglet-ExtraBold.ttf"),
+    "Sniglet-Regular": require("../../assets/fonts/Sniglet-Regular.ttf"),
+  });
+
+  if (!fontsLoaded) {
+    return <AppLoading />;
+  }
+  */
+
   return (
-    <Tabs screenOptions={{ 
-      tabBarActiveTintColor: 'white', headerShown:false, tabBarStyle: {
-        backgroundColor: theme.colors.backgroundPrimary,
-      }
-      }}> 
-      
-      <Tabs.Screen
-        name="main"
-        options={{
-          title: 'Home',
-          tabBarIcon: ({ size, color }) => 
-            <MaterialCommunityIcons size={size} name="home" color={color} />,
-        }}
-      />
-       
-      <Tabs.Screen
-        name="journal"
-        options={{
-          title: 'Journal',
-          tabBarIcon: ({ size, color }) => 
-            <FontAwesome size={size} name="user" color={color} />,
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: theme.colors.backgroundPrimary,
-          },
-          headerTitle: () => (
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text style={{ color: theme.colors.textPrimary, fontSize: 18, fontWeight: 'bold' }}>My Profile</Text>
-            </View>
-          ),
-        }}
-      />
-    </Tabs>
-    
-    
-  );
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ color, size }) => {
+          let iconName;
+          if (route.name === "Home") iconName = "home";
+          else if (route.name === "Journal") iconName = "book";
+          else if (route.name === "Profile") iconName = "person";
+          else if (route.name === "Workouts") iconName = "fitness";
 
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
+        headerShown: false, // Hides default header
+      })}
+    >
+      <Tab.Screen name="Home" component={Home} />
+      <Tab.Screen name="Journal" component={Journal} />
+      <Tab.Screen name="Workouts" component={Workout} />
+      <Tab.Screen name="Profile" component={Profile} />
+    </Tab.Navigator>
+  );
 }
