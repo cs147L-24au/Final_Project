@@ -16,7 +16,7 @@ const HomePage = ({ navigation }) => {
   const fetchData = async () => { // fetching the data
     try {
       const data = await db.from('JournalEntry').select('*');
-      console.log("Here are all the fetched entries: ", data);
+      console.log("Home page: Here are all the fetched entries: ", data);
       setEntry(data);
     } catch (err) {
       console.error("Error: failed to setPosts: ", err);
