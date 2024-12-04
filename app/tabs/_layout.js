@@ -1,30 +1,19 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { Ionicons } from "@expo/vector-icons";
+
 import Home from "./home";
 import Journal from "./journal";
 import Profile from "./profile";
 import Workout from "./workout";
-
-// Commented out the custom fonts for now
-// import { useFonts } from "expo-font";
-// import AppLoading from "expo-app-loading";
+import AddEntryModal from "./AddEntryModal"; // Import the Add Entry modal component
 
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator(); // Stack for including modals
 
-export default function Layout() {
-  // Placeholder for the fonts logic, commented out for now
-  /*
-  const [fontsLoaded] = useFonts({
-    "Sniglet-ExtraBold": require("../../assets/fonts/Sniglet-ExtraBold.ttf"),
-    "Sniglet-Regular": require("../../assets/fonts/Sniglet-Regular.ttf"),
-  });
-
-  if (!fontsLoaded) {
-    return <AppLoading />;
-  }
-  */
-
+// Define the Tab Navigator
+function TabNavigator() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -39,7 +28,7 @@ export default function Layout() {
         },
         tabBarActiveTintColor: "tomato",
         tabBarInactiveTintColor: "gray",
-        headerShown: false, // Hides default header
+        headerShown: false, // Hides default header for tabs
       })}
     >
       <Tab.Screen name="Home" component={Home} />
@@ -47,5 +36,29 @@ export default function Layout() {
       <Tab.Screen name="Workouts" component={Workout} />
       <Tab.Screen name="Profile" component={Profile} />
     </Tab.Navigator>
+  );
+}
+
+export default function Layout() {
+  return (
+    <Stack.Navigator>
+      {/* Main Tab Navigator */}
+      <Stack.Screen
+        name="Tabs"
+        component={TabNavigator}
+        options={{ headerShown: false }} // Hide header for tabs
+      />
+
+      {/* Modal Screen for Adding Entries */}
+      <Stack.Screen
+        name="AddEntryModal"
+        component={AddEntryModal}
+        options={{
+          presentation: "modal", // Makes it a modal
+          headerShown: true, // Show a header for the modal
+          title: "Add Workout Entry", // Header title for the modal
+        }}
+      />
+    </Stack.Navigator>
   );
 }

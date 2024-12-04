@@ -9,10 +9,11 @@ import {
 } from "react-native";
 import db from "../../database/db";
 import WorkoutComponent from "../../components/WorkoutComponent";
-
+import { useNavigation } from "expo-router";
 const WorkoutPage = () => {
   const [workouts, setWorkouts] = useState([]); // State to store workout data
   const [loading, setLoading] = useState(true); // State for loading status
+  const navigation = useNavigation(); // Move this inside the component
 
   // Function to fetch data from Supabase
   const fetchData = async () => {
@@ -88,7 +89,7 @@ const WorkoutPage = () => {
       {/* Floating "+" Button */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => console.log("Add Workout Button Pressed")}
+        onPress={() => navigation.navigate("AddEntryModal")}
       >
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
