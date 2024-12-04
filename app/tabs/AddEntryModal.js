@@ -43,7 +43,7 @@ const AddEntryModal = ({ navigation }) => {
       duration: parseInt(duration),
       calories: parseInt(calories),
       notes,
-      user_id: 123, // Replace with dynamic user ID when available
+      user_id: "123", // Replace with dynamic user ID when available
     };
 
     const result = await insertWorkout(entryData);

@@ -44,7 +44,7 @@ const WorkoutPage = () => {
   }, []);
 
   // Log the `workouts` state before rendering
-  console.log("Workouts state:", workouts);
+  // console.log("Workouts state:", workouts);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,18 +53,18 @@ const WorkoutPage = () => {
 
       {/* Subtitle or Instructions */}
       <Text style={styles.subtitle}>
-        Log your workouts and see your progress!
+        Document your workouts to see your journey unfold
       </Text>
 
       {/* FlatList to display workout entries */}
       <FlatList
         data={workouts}
         keyExtractor={(item) => {
-          console.log("KeyExtractor for item:", item.id); // Log item ID
+          //   console.log("KeyExtractor for item:", item.id); // Log item ID
           return item.id.toString();
         }}
         renderItem={({ item }) => {
-          console.log("Rendering item in FlatList:", item); // Log each item passed to renderItem
+          //   console.log("Rendering item in FlatList:", item); // Log each item passed to renderItem
           return (
             <WorkoutComponent
               exercise={item.exercise}
@@ -98,9 +98,9 @@ const WorkoutPage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  container: { // app background
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F4A261",
     padding: 16,
   },
   title: {
@@ -109,10 +109,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginTop: 24,
     marginBottom: 16,
+    color: "white",
   },
   subtitle: {
     fontSize: 18,
-    color: "#666",
+    color: "white",
     textAlign: "center",
     marginBottom: 24,
   },
