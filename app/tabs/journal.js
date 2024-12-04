@@ -5,6 +5,7 @@ import {
   FlatList,
   View,
   TouchableOpacity,
+  Dimensions,
   Alert,
 } from "react-native";
 import { useState, useEffect } from "react";
@@ -17,12 +18,18 @@ import Loading from "@/components/Loading";
 import db from "@/database/db";
 import useSession from "@/utils/useSession";
 import JournalComponent from "@/components/JournalComponent";
+import { useNavigation } from "expo-router";
 
 /*
 1) want to pass in data from home to journal.
 the data that I am pulling I want to save as a usestate in Home.js
 */
+const { width, height } = Dimensions.get("window");
+
 export default function Journal() {
+  const navigation = useNavigation();
+  
+  const router = useRouter(); // to help navigate to another screen
   const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
     // fetching the data
@@ -62,6 +69,13 @@ export default function Journal() {
             );
           }}
         />
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => navigation.navigate("popUps/addEntry")} // goes to add journal
+        >
+          <Text style={styles.addButtonText}>+</Text>
+        </TouchableOpacity>
+
       </SafeAreaView>
     );
   }
@@ -73,7 +87,7 @@ export default function Journal() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#c05ef4",
+    backgroundColor: "#FFFF", //  above header
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -83,6 +97,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
+    backgroundColor: "#D0CBC4" // grey
   },
   headerJournalTxt: {
     color: "white",
@@ -97,5 +112,22 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
+    backgroundColor: "#D0CBC4"
   },
+  addButton: {
+    backgroundColor: "white",
+    position: 'absolute',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 100,
+    alignItems: "center",
+    bottom: height * 0.05,
+    right: width * 0.05
+  },
+  addButtonText: {
+    color: "#c05ef4",
+    fontSize: 35,
+    fontWeight: "light",
+  },
+  
 });

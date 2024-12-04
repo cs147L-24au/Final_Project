@@ -28,14 +28,12 @@ const styles = StyleSheet.create({
         height: windowHeight * 0.1      
     },
     timeStampOuter: {
-   
         backgroundColor: '#FFFF', 
         paddingHorizontal: 8, 
         paddingVertical: 4, 
         borderRadius: 4, 
         alignSelf: 'flex-start',
         marginBottom: 8
-
     },
     timeStampText: {
         color: '#765ef4',
@@ -45,6 +43,7 @@ const styles = StyleSheet.create({
     journalEntryOuter: {
         flexDirection: 2,
         height: windowHeight * 0.5,
+        marginLeft: 15
     },
     journalText: {
         color: '#765ef4',
