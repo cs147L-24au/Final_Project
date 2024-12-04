@@ -7,41 +7,43 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
-
-const mockWorkouts = [
-  {
-    id: 1,
-    exercise: "Running",
-    calories: 300,
-    mood: "Happy",
-    created_at: new Date().toISOString(), // Current date
-  },
-  {
-    id: 2,
-    exercise: "Yoga",
-    calories: 150,
-    mood: "Relaxed",
-    created_at: new Date(Date.now() - 86400000).toISOString(), // Yesterday's date
-  },
-  {
-    id: 3,
-    exercise: "Cycling",
-    calories: 400,
-    mood: "Energetic",
-    created_at: new Date(Date.now() - 172800000).toISOString(), // Two days ago
-  },
-];
+import db from "../../database/db";
+import WorkoutComponent from "../../components/WorkoutComponent";
 
 const WorkoutPage = () => {
-  const [workouts, setWorkouts] = useState([]);
+  const [workouts, setWorkouts] = useState([]); // State to store workout data
+  const [loading, setLoading] = useState(true); // State for loading status
 
-  // Simulate fetching workouts on mount
+  // Function to fetch data from Supabase
+  const fetchData = async () => {
+    try {
+      console.log("Fetching workout data...");
+      const { data, error } = await db
+        .from("WorkoutEntry")
+        .select("*")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        console.error("Error fetching workouts from Supabase:", error);
+        setWorkouts([]);
+      } else {
+        console.log("Workout data fetched successfully:", data);
+        setWorkouts(data); // Update state with fetched data
+      }
+    } catch (err) {
+      console.error("Unexpected error fetching workouts:", err);
+    } finally {
+      setLoading(false); // Stop loading indicator
+    }
+  };
+
+  // Fetch data when the component mounts
   useEffect(() => {
-    // Replace this with `fetchWorkouts(userId)` when backend is ready
-    setTimeout(() => {
-      setWorkouts(mockWorkouts); // Load mock data
-    }, 1000); // Simulate a slight delay for fetching
+    fetchData();
   }, []);
+
+  // Log the `workouts` state before rendering
+  console.log("Workouts state:", workouts);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -53,31 +55,40 @@ const WorkoutPage = () => {
         Log your workouts and see your progress!
       </Text>
 
-      {/* Workout List */}
+      {/* FlatList to display workout entries */}
       <FlatList
         data={workouts}
-        keyExtractor={(item) => item.id.toString()} // Ensure each workout has a unique ID
-        renderItem={({ item }) => (
-          <View style={styles.workoutItem}>
-            <Text style={styles.workoutName}>{item.exercise}</Text>
-            <Text style={styles.calories}>Calories Burned: {item.calories}</Text>
-            <Text style={styles.mood}>Mood: {item.mood}</Text>
-            <Text style={styles.date}>
-              {new Date(item.created_at).toLocaleDateString()}
-            </Text>
-          </View>
-        )}
+        keyExtractor={(item) => {
+          console.log("KeyExtractor for item:", item.id); // Log item ID
+          return item.id.toString();
+        }}
+        renderItem={({ item }) => {
+          console.log("Rendering item in FlatList:", item); // Log each item passed to renderItem
+          return (
+            <WorkoutComponent
+              exercise={item.exercise}
+              calories={item.calories}
+              duration={item.duration}
+              notes={item.notes}
+              timestamp={item.created_at}
+            />
+          );
+        }}
         ListEmptyComponent={
-          <View style={styles.placeholder}>
-            <Text style={styles.placeholderText}>No workouts logged yet.</Text>
-          </View>
+          !loading && (
+            <View style={styles.placeholder}>
+              <Text style={styles.placeholderText}>
+                No workouts logged yet.
+              </Text>
+            </View>
+          )
         }
       />
 
       {/* Floating "+" Button */}
       <TouchableOpacity
         style={styles.addButton}
-        onPress={() => console.log("Add Workout")}
+        onPress={() => console.log("Add Workout Button Pressed")}
       >
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
@@ -89,57 +100,33 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    padding: 16, // Add padding for a clean layout
+    padding: 16,
   },
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    textAlign: "center", // Center-align the title
-    marginTop: 24, // Add space from the top
-    marginBottom: 16, // Add space below the title
+    textAlign: "center",
+    marginTop: 24,
+    marginBottom: 16,
   },
   subtitle: {
     fontSize: 18,
     color: "#666",
-    textAlign: "center", // Center-align the subtitle
-    marginBottom: 24, // Add space below the subtitle
-  },
-  workoutItem: {
-    backgroundColor: "#f9f9f9",
-    padding: 16,
-    marginBottom: 8,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#ddd",
-  },
-  workoutName: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  calories: {
-    fontSize: 16,
-    color: "#555",
-  },
-  mood: {
-    fontSize: 16,
-    color: "#777",
-  },
-  date: {
-    fontSize: 14,
-    color: "#999",
+    textAlign: "center",
+    marginBottom: 24,
   },
   placeholder: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#f5f5f5", // Light gray background for placeholder
-    borderRadius: 8, // Rounded edges
+    backgroundColor: "#f5f5f5",
+    borderRadius: 8,
     padding: 16,
   },
   placeholderText: {
     fontSize: 16,
     color: "#999",
-    fontStyle: "italic", // Emphasize placeholder text
+    fontStyle: "italic",
   },
   addButton: {
     position: "absolute",
@@ -155,6 +142,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.3,
     shadowRadius: 3,
+    elevation: 4,
   },
   addButtonText: {
     color: "#fff",
