@@ -71,7 +71,7 @@ export default function Journal() {
         />
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate("popUps/addEntry")} // goes to add journal
+          onPress={() => navigation.navigate("AddEntry")} // goes to add journal
         >
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "#D0CBC4" // grey
+    backgroundColor: "#FFFF" 
   },
   headerJournalTxt: {
-    color: "white",
+    color: "black",
     fontWeight: "600",
     fontSize: "30",
   },
@@ -112,22 +112,28 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#D0CBC4"
+    backgroundColor: "#fff"
   },
   addButton: {
-    backgroundColor: "white",
-    position: 'absolute',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 100,
+    position: "absolute",
+    bottom: 20,
+    right: 20,
+    backgroundColor: "tomato",
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    justifyContent: "center",
     alignItems: "center",
-    bottom: height * 0.05,
-    right: width * 0.05
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    elevation: 4,
   },
   addButtonText: {
-    color: "#c05ef4",
-    fontSize: 35,
-    fontWeight: "light",
+    color: "#fff",
+    fontSize: 24,
+    fontWeight: "bold",
   },
   
 });

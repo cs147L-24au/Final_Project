@@ -8,6 +8,7 @@ import Journal from "./journal";
 import Profile from "./profile";
 import Workout from "./workout";
 import AddEntryModal from "./AddEntryModal"; // Import the Add Entry modal component
+import AddEntry from "./AddEntry"; // lowercase might be error??
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator(); // Stack for including modals
@@ -57,6 +58,16 @@ export default function Layout() {
           presentation: "modal", // Makes it a modal
           headerShown: true, // Show a header for the modal
           title: "Add Workout Entry", // Header title for the modal
+        }}
+      />
+
+      <Stack.Screen
+        name="AddEntry"
+        component={AddEntry}
+        options={{
+          presentation: "modal", // Makes it a modal
+          headerShown: true, // Show a header for the modal
+          title: "Add Journal Entry", // Header title for the modal
         }}
       />
     </Stack.Navigator>

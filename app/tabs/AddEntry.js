@@ -13,7 +13,7 @@ export default function AddEntry() {
             return;
           }
         try {
-            await db.from("JournalEntry").insert([{ text, created_at: new Date() }]);
+            await db.from("JournalEntry").insert([{ text, created_at: new Date(), user_id: 12345 }]);
             alert("Entry saved!");
             router.back(); // Go back to Journal page
           } catch (err) {
@@ -54,8 +54,6 @@ const styles = StyleSheet.create({
     },
     textInput: {
       backgroundColor: "white",
-      padding: 15,
-      borderRadius: 8,
       fontSize: 16,
       height: 150,
       textAlignVertical: "top",
@@ -63,8 +61,6 @@ const styles = StyleSheet.create({
     saveButton: {
       backgroundColor: "white",
       paddingVertical: 15,
-      borderRadius: 8,
-      marginTop: 20,
       alignItems: "center",
     },
     saveButtonText: {

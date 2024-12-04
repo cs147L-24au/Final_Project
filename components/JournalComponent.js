@@ -14,7 +14,6 @@ export default function JournalComponent({timestamp, entryText}) {
 
             <View style={styles.journalEntryOuter}>
                 <Text style={styles.journalText} numberOfLines={1}>{entryText}</Text>
-
             </View>
        
         </View>
@@ -23,12 +22,16 @@ export default function JournalComponent({timestamp, entryText}) {
 
 const styles = StyleSheet.create({
     outerBox: {
-        backgroundColor: '#fff', // Box background color
+        backgroundColor: '#f9f9f9', // Box background color
         flexDirection: 'column', 
-        height: windowHeight * 0.1      
+        height: windowHeight * 0.1, 
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#ddd", 
+        marginBottom: 5  
     },
     timeStampOuter: {
-        backgroundColor: '#FFFF', 
+        backgroundColor: '#f9f9f9', 
         paddingHorizontal: 8, 
         paddingVertical: 4, 
         borderRadius: 4, 
@@ -36,7 +39,7 @@ const styles = StyleSheet.create({
         marginBottom: 8
     },
     timeStampText: {
-        color: '#765ef4',
+        color: '#555',
         fontSize: 14,
         fontWeight: '500'
     },
@@ -46,9 +49,10 @@ const styles = StyleSheet.create({
         marginLeft: 15
     },
     journalText: {
-        color: '#765ef4',
+        color: '#333',
         fontSize: 14,
-        fontWeight: '500'
+        fontWeight: "300",
+        fontStyle: "normal"
     },
   
 });
