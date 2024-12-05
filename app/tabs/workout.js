@@ -98,7 +98,8 @@ const WorkoutPage = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { // app background
+  container: {
+    // app background
     flex: 1,
     backgroundColor: "#F4A261",
     padding: 16,

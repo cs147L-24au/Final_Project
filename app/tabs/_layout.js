@@ -56,8 +56,7 @@ export default function Layout() {
         component={AddEntryModal}
         options={{
           presentation: "modal", // Makes it a modal
-          headerShown: true, // Show a header for the modal
-          title: "Add Workout Entry", // Header title for the modal
+          headerShown: false, 
         }}
       />
 

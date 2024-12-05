@@ -12,19 +12,19 @@ const WorkoutComponent = ({
     <View style={styles.container}>
       <Text style={styles.exerciseName}>{exercise}</Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Calories Burned: </Text>
+        <Text style={styles.label}>🔥 Calories Burned: </Text>
         {calories}
       </Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Duration: </Text>
+        <Text style={styles.label}>⏱️ Duration: </Text>
         {duration} mins
       </Text>
       <Text style={styles.detail}>
-        <Text style={styles.label}>Notes: </Text>
+        <Text style={styles.label}>💭 Notes: </Text>
         {notes || "No notes provided"}
       </Text>
       <Text style={styles.timestamp}>
-        Logged on: {new Date(timestamp).toLocaleDateString()}
+        {new Date(timestamp).toLocaleDateString()}
       </Text>
     </View>
   );
@@ -38,6 +38,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ddd",
+    // Adding shadow for shading
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   exerciseName: {
     fontSize: 18,
