@@ -6,8 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   Dimensions,
+  Animated,
   View,
-  Animated
 } from "react-native";import { useRouter } from "expo-router";
 import db from "@/database/db";
 import * as Font from "expo-font";
@@ -27,29 +27,6 @@ const router = useRouter();
 const [text, setText] = useState("");
 const [selectedMood, setSelectedMood] = useState(null); // State to track selected mood
 const emojis = ["😊", "😢", "😡", "😴", "😃", "🤔"];
-
-const circleOne = useRef(new Animated.Value(0)); // individual Animated.Value object circ1 and circ2
-//const circleTwo = useRef(new Animated.Value(0));
-
-// Use a UseEffect to continously render the circles
-useEffect(() => {
-  // Starting the animation of circleOne
-  Animated.loop(
-    Animated.sequence([
-      Animated.timing(circleOne, {
-        toValue: 1, // end position to move to
-        duration: 6000,
-        useNativeDriver: true,
-      }),
-      Animated.timing(circleOne, {
-        toValue: 0, // start position that it moves to
-        duration: 6000,
-        useNativeDriver: true,
-      }),
-    ])
-  ).start(); // this makes it loop indefinitely
-}, []);
-
 
 if (!loaded) {
   return null; // Render nothing until fonts are loaded
@@ -185,6 +162,14 @@ const styles = StyleSheet.create({
     },
     emoji: {
       fontSize: 24,
+    },
+    circle: {
+      position: "absolute",
+      width: 200,
+      height: 150,
+      borderRadius: 75,
+      backgroundColor: "#264653",
+      opacity: 0.3, // Make the circle semi-transparent
     },
 
   });
