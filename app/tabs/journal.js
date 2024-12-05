@@ -61,7 +61,9 @@ export default function Journal() {
           </Text>
         </View>
         <View>
-          <Text style={styles.subheaderJournalTxt}>oh how you've grown!</Text>
+          <Text style={styles.subheaderJournalTxt}>
+            oh how you've grown!
+            </Text>
         </View>
 
         <FlatList
@@ -109,7 +111,7 @@ const styles = StyleSheet.create({
   },
   headerJournalTxt: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: 'bold',
     fontSize: "30",
     fontFamily: "MontserratAlternates",
   },

@@ -121,10 +121,10 @@ const styles = StyleSheet.create({
       textAlignVertical: "top",
     },
     saveInButton: {
-      backgroundColor: "white",
+      backgroundColor: "#264653",
       paddingVertical: 15,
       alignItems: "center",
-      borderRadius: 100,
+      borderRadius: 8,
       borderColor:  "white",
       width: windowWidth * 0.4,
       height: windowHeight * 0.07,
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
       shadowRadius: 3,
     },
     saveButtonText: {
-      color: "black",
+      color: "white",
       fontSize: 20,
       fontWeight: "bold",
       fontFamily: "MontserratMedium"
