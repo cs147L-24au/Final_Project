@@ -10,30 +10,84 @@ import { useEffect, useState } from "react";
 import db from "@/database/db";
 
 const HomePage = ({ navigation }) => {
-  
-  const [entry, setEntry] = useState(null); // where I will store data
+  const [journalStreak, setJournalStreak] = useState(0); // Journal streak
+  const [randomJournal, setRandomJournal] = useState(""); // Random journal reflection
+  const [workoutStreak, setWorkoutStreak] = useState(0); // Workout streak
+  const [caloriesBurned, setCaloriesBurned] = useState(0); // Calories burned
+  const [userName, setUserName] = useState("User"); // Placeholder for user name
 
-  const fetchData = async () => { // fetching the data
+  const fetchData = async () => {
     try {
-      const data = await db.from('JournalEntry').select('*');
-      console.log("Home page: Here are all the fetched entries: ", data);
-      setEntry(data);
+      // Fetch journal entries
+      const { data: journalData, error: journalError } = await db
+        .from("JournalEntry") // Replace with your Supabase table name
+        .select("*")
+        .gte(
+          "created_at",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        ); // Last 7 days
+
+      if (journalError) {
+        console.error("Error fetching journal data:", journalError);
+      } else if (journalData) {
+        setJournalStreak(journalData.length); // Number of journal entries in the last 7 days
+        if (journalData.length > 0) {
+          const randomIndex = Math.floor(Math.random() * journalData.length);
+          setRandomJournal(
+            journalData[randomIndex]?.text || "No reflection found."
+          );
+        }
+      }
+
+      // Fetch workout entries
+      const { data: workoutData, error: workoutError } = await db
+        .from("WorkoutEntry") // Replace with your Supabase table name
+        .select("calories, created_at")
+        .gte(
+          "created_at",
+          new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString()
+        ); // Last 7 days
+
+      if (workoutError) {
+        console.error("Error fetching workout data:", workoutError);
+        setWorkoutStreak(0);
+        setCaloriesBurned(0);
+      } else if (workoutData) {
+        setWorkoutStreak(workoutData.length); // Number of workout entries in the last 7 days
+        const totalCalories = workoutData.reduce(
+          (sum, workout) => sum + (workout.calories || 0),
+          0
+        );
+        setCaloriesBurned(totalCalories); // Total calories burned
+      }
+
+      // Fetch user name
+      const { data: userData, error: userError } = await db
+        .from("Users") // Replace with your Supabase user table name
+        .select("name")
+        .single();
+
+      if (userError) {
+        console.error("Error fetching user name:", userError);
+      } else if (userData) {
+        setUserName(userData.name || "User");
+      }
+
+      console.log("Fetched data successfully!");
     } catch (err) {
-      console.error("Error: failed to setPosts: ", err);
+      console.error("Unexpected error fetching data:", err);
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
-  
-
 
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header Section */}
       <View style={styles.header}>
-        <Text style={styles.greeting}>Hello, [NAME]</Text>
+        <Text style={styles.greeting}>Hello, there!</Text>
       </View>
 
       {/* Weekly Overview Section */}
@@ -44,9 +98,9 @@ const HomePage = ({ navigation }) => {
           {/* Journal Streak */}
           <View style={styles.box}>
             <Text style={styles.boxTitle}>Journal Entries</Text>
-            <Text style={styles.streak}>3/7 Days</Text>
+            <Text style={styles.streak}>{journalStreak}/7 Days</Text>
             <Text style={styles.reflection}>
-              Reflection from 2 days ago: [PREV_JOURNAL_ENTRY]
+              Reflection from 2 days ago: {randomJournal}
             </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("Journal")}
@@ -59,8 +113,10 @@ const HomePage = ({ navigation }) => {
           {/* Workout Streak */}
           <View style={styles.box}>
             <Text style={styles.boxTitle}>Workout Streak</Text>
-            <Text style={styles.streak}>4/7 Days</Text>
-            <Text style={styles.reflection}>Burned [X] Calories 🔥</Text>
+            <Text style={styles.streak}>{workoutStreak}/7 Days</Text>
+            <Text style={styles.reflection}>
+              Burned {caloriesBurned} Calories 🔥
+            </Text>
             <TouchableOpacity
               onPress={() => navigation.navigate("Workouts")}
               style={styles.button}
