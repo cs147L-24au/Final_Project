@@ -71,6 +71,7 @@ export default function Journal() {
               <JournalComponent
                 entryText={item.text}
                 timestamp={item.created_at}
+                moodEmoji={item.mood}
               />
             );
           }}

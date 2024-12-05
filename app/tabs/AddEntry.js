@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   View,
+  ScrollView
 } from "react-native";import { useRouter } from "expo-router";
 import db from "@/database/db";
 import * as Font from "expo-font";
@@ -38,7 +39,7 @@ if (!loaded) {
           return;
         }
       try {
-          await db.from("JournalEntry").insert([{ text, created_at: new Date(), user_id: 12345 }]);
+          await db.from("JournalEntry").insert([{ text, mood: selectedMood, created_at: new Date(), user_id: 12345 }]);
           alert("Entry saved!");
           router.back(); // Go back to Journal page
         } catch (err) {
