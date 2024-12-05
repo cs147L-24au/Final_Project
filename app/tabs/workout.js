@@ -7,74 +7,70 @@ import {
   StyleSheet,
   SafeAreaView,
 } from "react-native";
+import { useNavigation } from "expo-router";
+import * as Font from "expo-font";
 import db from "../../database/db";
 import WorkoutComponent from "../../components/WorkoutComponent";
-import { useNavigation } from "expo-router";
-const WorkoutPage = () => {
-  const [workouts, setWorkouts] = useState([]); // State to store workout data
-  const [loading, setLoading] = useState(true); // State for loading status
-  const navigation = useNavigation(); // Move this inside the component
 
-  // Function to fetch data from Supabase
+const WorkoutPage = () => {
+  // Load fonts
+  const [fontsLoaded] = Font.useFonts({
+    MontserratAlternates: require("../../assets/Montserrat_Alternates/MontserratAlternates-ExtraBold.ttf"),
+  });
+
+  const [workouts, setWorkouts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const navigation = useNavigation();
+
   const fetchData = async () => {
     try {
-      console.log("Fetching workout data...");
       const { data, error } = await db
         .from("WorkoutEntry")
         .select("*")
         .order("created_at", { ascending: false });
 
       if (error) {
-        console.error("Error fetching workouts from Supabase:", error);
         setWorkouts([]);
       } else {
-        console.log("Workout data fetched successfully:", data);
-        setWorkouts(data); // Update state with fetched data
+        setWorkouts(data);
       }
-    } catch (err) {
-      console.error("Unexpected error fetching workouts:", err);
     } finally {
-      setLoading(false); // Stop loading indicator
+      setLoading(false);
     }
   };
 
-  // Fetch data when the component mounts
   useEffect(() => {
     fetchData();
   }, []);
 
-  // Log the `workouts` state before rendering
-  // console.log("Workouts state:", workouts);
+  // Ensure fonts are loaded before rendering
+  if (!fontsLoaded) {
+    return <Text>Loading Fonts...</Text>;
+  }
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Page Title */}
-      <Text style={styles.title}>Your Physical Wellness Journey</Text>
+      {/* Title with the custom font */}
+      <Text style={[styles.title, { fontFamily: "MontserratAlternates" }]}>
+        Your Physical Wellness Journey
+      </Text>
 
-      {/* Subtitle or Instructions */}
       <Text style={styles.subtitle}>
         Document your workouts to see your journey unfold
       </Text>
 
-      {/* FlatList to display workout entries */}
       <FlatList
         data={workouts}
-        keyExtractor={(item) => {
-          //   console.log("KeyExtractor for item:", item.id); // Log item ID
-          return item.id.toString();
-        }}
-        renderItem={({ item }) => {
-          //   console.log("Rendering item in FlatList:", item); // Log each item passed to renderItem
-          return (
-            <WorkoutComponent
-              exercise={item.exercise}
-              calories={item.calories}
-              duration={item.duration}
-              notes={item.notes}
-              timestamp={item.created_at}
-            />
-          );
-        }}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <WorkoutComponent
+            exercise={item.exercise}
+            calories={item.calories}
+            duration={item.duration}
+            notes={item.notes}
+            timestamp={item.created_at}
+          />
+        )}
         ListEmptyComponent={
           !loading && (
             <View style={styles.placeholder}>
@@ -86,7 +82,6 @@ const WorkoutPage = () => {
         }
       />
 
-      {/* Floating "+" Button */}
       <TouchableOpacity
         style={styles.addButton}
         onPress={() => navigation.navigate("AddEntryModal")}
@@ -99,7 +94,6 @@ const WorkoutPage = () => {
 
 const styles = StyleSheet.create({
   container: {
-    // app background
     flex: 1,
     backgroundColor: "#F4A261",
     padding: 16,
@@ -114,9 +108,10 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 18,
-    color: "white",
+    color: "#666",
     textAlign: "center",
     marginBottom: 24,
+    color: "white",
   },
   placeholder: {
     flex: 1,
@@ -128,7 +123,7 @@ const styles = StyleSheet.create({
   },
   placeholderText: {
     fontSize: 16,
-    color: "#999",
+    color: "white",
     fontStyle: "italic",
   },
   addButton: {
