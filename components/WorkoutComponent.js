@@ -32,7 +32,7 @@ const WorkoutComponent = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#f9f9f9",
+    backgroundColor: "white",
     padding: 16,
     marginVertical: 8,
     borderRadius: 8,
