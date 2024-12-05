@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   StyleSheet,
   Text,
@@ -12,25 +12,48 @@ import {
 import db from "@/database/db";
 import * as Font from "expo-font";
 
+{/* Global Variables For Styling */}
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function AddEntry() {
+
+{/* Local Variables */}
 const [loaded] = Font.useFonts({
   MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
   MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
 });
-  
+const router = useRouter();
+const [text, setText] = useState("");
+const [selectedMood, setSelectedMood] = useState(null); // State to track selected mood
+const emojis = ["😊", "😢", "😡", "😴", "😃", "🤔"];
+
+const circleOne = useRef(new Animated.Value(0)); // individual Animated.Value object circ1 and circ2
+//const circleTwo = useRef(new Animated.Value(0));
+
+// Use a UseEffect to continously render the circles
+useEffect(() => {
+  // Starting the animation of circleOne
+  Animated.loop(
+    Animated.sequence([
+      Animated.timing(circleOne, {
+        toValue: 1, // end position to move to
+        duration: 6000,
+        useNativeDriver: true,
+      }),
+      Animated.timing(circleOne, {
+        toValue: 0, // start position that it moves to
+        duration: 6000,
+        useNativeDriver: true,
+      }),
+    ])
+  ).start(); // this makes it loop indefinitely
+}, []);
+
+
 if (!loaded) {
   return null; // Render nothing until fonts are loaded
 }
-
-// adding a comment for testing
-  const router = useRouter();
-  const [text, setText] = useState("");
-  const [selectedMood, setSelectedMood] = useState(null); // State to track selected mood
-  const emojis = ["😊", "😢", "😡", "😴", "😃", "🤔"];
-
   const saveInputText = async () => {
       if (!text.trim()) {
           alert("Please write something!");
