@@ -7,15 +7,13 @@ import {
   TouchableOpacity,
   Dimensions,
   View,
-  ScrollView
+  Animated
 } from "react-native";import { useRouter } from "expo-router";
 import db from "@/database/db";
 import * as Font from "expo-font";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
-
 
 export default function AddEntry() {
 const [loaded] = Font.useFonts({
