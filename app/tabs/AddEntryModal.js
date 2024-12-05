@@ -7,8 +7,10 @@ import {
   StyleSheet,
   Alert,
 } from "react-native";
+import { Dimensions } from "react-native";
 import db from "../../database/db"; // Supabase client
-
+windowWidth = Dimensions.get("window").width;
+windowHeight = Dimensions.get("window").height;
 const AddEntryModal = ({ navigation }) => {
   const [exercise, setExercise] = useState("");
   const [duration, setDuration] = useState("");
@@ -101,7 +103,8 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
+    marginBottom: .20 * windowHeight,
+    textAlign: "center",
   },
   input: {
     borderWidth: 1,
@@ -119,6 +122,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 8,
     alignItems: "center",
+    marginTop: windowHeight * 0.1,
   },
   addButtonText: {
     color: "#fff",
