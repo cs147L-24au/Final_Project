@@ -87,7 +87,7 @@ export default function Journal() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFF", //  above header
+    backgroundColor: "#8AB17D", //  above header
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
@@ -97,10 +97,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "#FFFF" 
+    backgroundColor: "#8AB17D" 
   },
   headerJournalTxt: {
-    color: "black",
+    color: "white",
     fontWeight: "600",
     fontSize: "30",
   },
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#fff"
+    backgroundColor: "#8AB17D"
   },
   addButton: {
     position: "absolute",
     bottom: 20,
     right: 20,
-    backgroundColor: "tomato",
+    backgroundColor: "#264653",
     width: 60,
     height: 60,
     borderRadius: 30,

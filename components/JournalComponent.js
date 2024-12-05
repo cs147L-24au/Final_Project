@@ -9,7 +9,7 @@ export default function JournalComponent({timestamp, entryText}) {
     return (
         <View style={styles.outerBox}>
             <View style={styles.timeStampOuter}>
-                <Text style={styles.timeStampText}>{timestamp}</Text>
+                <Text style={styles.timeStampText}>{new Date(timestamp).toLocaleDateString()}</Text>
             </View>
 
             <View style={styles.journalEntryOuter}>
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         borderRadius: 8,
         borderWidth: 1,
         borderColor: "#ddd", 
-        marginBottom: 5  
+        marginBottom: 5 
     },
     timeStampOuter: {
         backgroundColor: '#f9f9f9', 
@@ -46,13 +46,15 @@ const styles = StyleSheet.create({
     journalEntryOuter: {
         flexDirection: 2,
         height: windowHeight * 0.5,
-        marginLeft: 15
+        marginLeft: 15,
+
     },
     journalText: {
         color: '#333',
         fontSize: 14,
         fontWeight: "300",
-        fontStyle: "normal"
+        fontStyle: "normal",
+        
     },
   
 });

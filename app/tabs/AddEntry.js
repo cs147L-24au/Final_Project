@@ -47,7 +47,7 @@ export default function AddEntry() {
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: "pink",
+      backgroundColor: "#8AB17D",
       padding: 20,
       justifyContent: "center",
       alignItems: 'center'
@@ -89,10 +89,14 @@ const styles = StyleSheet.create({
       width: windowWidth * 0.5,
       height: windowHeight * 0.07,
       position: 'relative',
-      top: 40
+      top: 40,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
     },
     saveButtonText: {
-      color: "#c05ef4",
+      color: "black",
       fontSize: 20,
       fontWeight: "bold",
     },
