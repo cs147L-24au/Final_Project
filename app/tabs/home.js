@@ -14,7 +14,6 @@ const HomePage = ({ navigation }) => {
   const [randomJournal, setRandomJournal] = useState(""); // Random journal reflection
   const [workoutStreak, setWorkoutStreak] = useState(0); // Workout streak
   const [caloriesBurned, setCaloriesBurned] = useState(0); // Calories burned
-  const [userName, setUserName] = useState("User"); // Placeholder for user name
 
   const fetchData = async () => {
     try {
@@ -60,22 +59,8 @@ const HomePage = ({ navigation }) => {
         );
         setCaloriesBurned(totalCalories); // Total calories burned
       }
-
-      // Fetch user name
-      const { data: userData, error: userError } = await db
-        .from("Users") // Replace with your Supabase user table name
-        .select("name")
-        .single();
-
-      if (userError) {
-        console.error("Error fetching user name:", userError);
-      } else if (userData) {
-        setUserName(userData.name || "User");
-      }
-
-      console.log("Fetched data successfully!");
     } catch (err) {
-      console.error("Unexpected error fetching data:", err);
+      console.error("Unexpected error in fetchData:", err); // Catch any unexpected errors
     }
   };
 

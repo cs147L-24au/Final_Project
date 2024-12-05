@@ -28,7 +28,7 @@ const { width, height } = Dimensions.get("window");
 
 export default function Journal() {
   const navigation = useNavigation();
-  
+
   const router = useRouter(); // to help navigate to another screen
   const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
@@ -58,24 +58,34 @@ export default function Journal() {
         </View>
 
         <FlatList
-          data={entry} // no need to do entry.data
+          data={entry}
+          keyExtractor={(item, index) =>
+            item.id ? item.id.toString() : index.toString()
+          }
           renderItem={({ item }) => {
-            console.log("here is item", item);
             return (
-              <JournalComponent
-                entryText={item.text}
-                timestamp={item.created_at}
-              />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate("JournalDetails", {
+                    entryText: item.text,
+                    timestamp: item.created_at,
+                  })
+                }
+              >
+                <JournalComponent
+                  entryText={item.text.substring(0, 100) + "..."} // Truncated text
+                  timestamp={item.created_at}
+                />
+              </TouchableOpacity>
             );
           }}
         />
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate("AddEntry")} // goes to add journal
+          onPress={() => navigation.navigate("popUps/addEntry")} // Goes to add journal
         >
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
-
       </SafeAreaView>
     );
   }
@@ -97,7 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "#8AB17D" 
+    backgroundColor: "#8AB17D",
   },
   headerJournalTxt: {
     color: "white",
@@ -112,7 +122,7 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#8AB17D"
+    backgroundColor: "#8AB17D",
   },
   addButton: {
     position: "absolute",
@@ -135,5 +145,4 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  
 });
