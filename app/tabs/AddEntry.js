@@ -38,6 +38,11 @@ export default function AddEntry() {
               onChangeText={setText}
               />
           </View>
+          {/*TEST */}
+          <TouchableOpacity style={styles.voiceButton} onPress={saveInputText}>
+            <Text style={styles.saveButtonText}>Microphone</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.saveInButton} onPress={saveInputText}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
@@ -86,10 +91,10 @@ const styles = StyleSheet.create({
       alignItems: "center",
       borderRadius: 100,
       borderColor:  "white",
-      width: windowWidth * 0.5,
+      width: windowWidth * 0.4,
       height: windowHeight * 0.07,
       position: 'relative',
-      top: 40,
+      top: 10,
       shadowColor: "#000",
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.3,
@@ -100,4 +105,21 @@ const styles = StyleSheet.create({
       fontSize: 20,
       fontWeight: "bold",
     },
+    // test
+    voiceButton: {
+      backgroundColor: "white",
+      paddingVertical: 15,
+      alignItems: "center",
+      borderRadius: 100,
+      borderColor: "white",
+      width: windowWidth * 0.4,
+      height: windowHeight * 0.07,
+      shadowColor: "#000",
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.3,
+      shadowRadius: 3,
+      top: -10
+
+    },
+
   });
