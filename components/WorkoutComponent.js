@@ -1,5 +1,6 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
+import * as Font from "expo-font";
 
 const WorkoutComponent = ({
   exercise,
@@ -8,6 +9,15 @@ const WorkoutComponent = ({
   notes,
   timestamp,
 }) => {
+  const [loaded] = Font.useFonts({
+    MontserratMedium: require("../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+    MontserratRegular: require("../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null; // Render nothing until fonts are loaded
+  }
+
   return (
     <View style={styles.container}>
       <Text style={styles.exerciseName}>{exercise}</Text>
@@ -38,7 +48,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#ddd",
-    // Adding shadow for shading
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
@@ -47,20 +56,22 @@ const styles = StyleSheet.create({
   },
   exerciseName: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontFamily: "MontserratMedium",
     marginBottom: 8,
   },
   detail: {
     fontSize: 16,
+    fontFamily: "MontserratRegular",
     color: "#555",
     marginBottom: 4,
   },
   label: {
-    fontWeight: "bold",
+    fontFamily: "MontserratMedium",
     color: "#333",
   },
   timestamp: {
     fontSize: 14,
+    fontFamily: "MontserratRegular",
     color: "#999",
     marginTop: 8,
     fontStyle: "italic",

@@ -6,18 +6,29 @@ import {
   TouchableOpacity,
   StyleSheet,
   Alert,
+  Dimensions,
 } from "react-native";
-import { Dimensions } from "react-native";
-import db from "../../database/db"; // Supabase client
-windowWidth = Dimensions.get("window").width;
-windowHeight = Dimensions.get("window").height;
+import * as Font from "expo-font";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
+
 const AddEntryModal = ({ navigation }) => {
   const [exercise, setExercise] = useState("");
   const [duration, setDuration] = useState("");
   const [calories, setCalories] = useState("");
   const [notes, setNotes] = useState("");
 
-  // Function to insert a new workout into the database
+  // Load fonts
+  const [loaded] = Font.useFonts({
+    MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+    MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+  });
+
+  if (!loaded) {
+    return null; // Render nothing until fonts are loaded
+  }
+
   const insertWorkout = async (entryData) => {
     try {
       const { data, error } = await db.from("WorkoutEntry").insert([entryData]);
@@ -33,7 +44,6 @@ const AddEntryModal = ({ navigation }) => {
     }
   };
 
-  // Handle submission of the form
   const handleAddWorkout = async () => {
     if (!exercise || !duration || !calories) {
       Alert.alert("Error", "Please fill out all required fields.");
@@ -102,8 +112,8 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: .20 * windowHeight,
+    fontFamily: "MontserratMedium",
+    marginBottom: windowHeight * 0.2,
     textAlign: "center",
   },
   input: {
@@ -112,6 +122,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginBottom: 12,
     borderRadius: 8,
+    fontFamily: "MontserratRegular",
   },
   notesInput: {
     height: 80,
@@ -126,7 +137,7 @@ const styles = StyleSheet.create({
   },
   addButtonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontFamily: "MontserratMedium",
     fontSize: 16,
   },
 });
