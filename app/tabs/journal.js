@@ -20,15 +20,14 @@ import JournalComponent from "@/components/JournalComponent";
 import { useNavigation } from "expo-router";
 import * as Font from "expo-font";
 
-
 export default function Journal() {
   const [loaded] = Font.useFonts({
     MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
     MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
   });
-    
+
   const navigation = useNavigation();
-  
+
   const router = useRouter(); // to help navigate to another screen
   const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
@@ -57,11 +56,13 @@ export default function Journal() {
     contentDisplayed = (
       <SafeAreaView style={styles.entryListContainer}>
         <View style={styles.headerContentContainer}>
-          <Text style={styles.headerJournalTxt}>My Journals</Text>
+          <Text style={styles.headerJournalTxt}>
+            Your Mental Wellness Journey
+          </Text>
         </View>
         <View>
           <Text style={styles.subheaderJournalTxt}>oh how you've grown!</Text>
-          </View>
+        </View>
 
         <FlatList
           data={entry} // no need to do entry.data
@@ -82,7 +83,6 @@ export default function Journal() {
         >
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
-
       </SafeAreaView>
     );
   }
@@ -98,7 +98,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-
   },
   headerContentContainer: {
     //flexDirection: "row",
@@ -106,13 +105,13 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginBottom: 20,
     backgroundColor: "#8AB17D",
-    alignItems: 'center'
+    alignItems: "center",
   },
   headerJournalTxt: {
     color: "white",
     fontWeight: "600",
     fontSize: "30",
-    fontFamily: "MontserratAlternates"
+    fontFamily: "MontserratAlternates",
   },
   subheaderJournalTxt: {
     fontSize: 18,
@@ -129,7 +128,7 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#8AB17D"
+    backgroundColor: "#8AB17D",
   },
   addButton: {
     position: "absolute",
@@ -152,5 +151,4 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
   },
-  
 });
