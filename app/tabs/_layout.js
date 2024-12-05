@@ -5,7 +5,6 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Home from "./home";
 import Journal from "./journal";
-import Profile from "./profile";
 import Workout from "./workout";
 import AddEntryModal from "./AddEntryModal"; // Import the Add Entry modal component
 import AddEntry from "./AddEntry"; // lowercase might be error??
@@ -22,7 +21,6 @@ function TabNavigator() {
           let iconName;
           if (route.name === "Home") iconName = "home";
           else if (route.name === "Journal") iconName = "book";
-          else if (route.name === "Profile") iconName = "person";
           else if (route.name === "Workouts") iconName = "fitness";
 
           return <Ionicons name={iconName} size={size} color={color} />;
@@ -35,7 +33,7 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Journal" component={Journal} />
       <Tab.Screen name="Workouts" component={Workout} />
-      <Tab.Screen name="Profile" component={Profile} />
+    
     </Tab.Navigator>
   );
 }
