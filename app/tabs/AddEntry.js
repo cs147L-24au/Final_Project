@@ -1,6 +1,13 @@
 import React, { useState } from "react";
-import { StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity, Dimensions, View } from "react-native";
-import { useRouter } from "expo-router";
+import {
+  StyleSheet,
+  Text,
+  SafeAreaView,
+  TextInput,
+  TouchableOpacity,
+  Dimensions,
+  View,
+} from "react-native";import { useRouter } from "expo-router";
 import db from "@/database/db";
 import * as Font from "expo-font";
 
@@ -22,6 +29,8 @@ if (!loaded) {
 // adding a comment for testing
   const router = useRouter();
   const [text, setText] = useState("");
+  const [selectedMood, setSelectedMood] = useState(null); // State to track selected mood
+  const emojis = ["😊", "😢", "😡", "😴", "😃", "🤔"];
 
   const saveInputText = async () => {
       if (!text.trim()) {
@@ -50,21 +59,37 @@ if (!loaded) {
               onChangeText={setText}
               />
           </View>
-          {/*TEST */}
+          {/* ADDING CODE FOR MOOD METER */}
+          <View style={styles.moodContainer}>
+            {emojis.map((emoji, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setSelectedMood(emoji)} // Update selected mood
+                style={[
+                  styles.emojiBox,
+                  selectedMood === emoji && styles.selectedEmojiBox, // Highlight if selected
+                ]}
+              >
+                <Text style={styles.emoji}>{emoji}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
           <TouchableOpacity style={styles.saveInButton} onPress={saveInputText}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
         </SafeAreaView>
+        
       );
 }
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      flexDirection: 'column',
       backgroundColor: "#8AB17D",
       padding: 20,
       justifyContent: "center",
-      alignItems: 'center'
-      //justifyContent: 'space-between'
+      alignItems: 'center',
+
     },
     title: {
       color: "white",
@@ -72,7 +97,7 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       textAlign: "center",
       position: 'relative',
-      top: -60,
+      top: -50,
       fontFamily: "MontserratMedium",
     },
     textInputContainer: {
@@ -83,10 +108,9 @@ const styles = StyleSheet.create({
       width: windowWidth * 0.8,
       borderRadius: 10,
       borderColor: "#ddd",
-      borderStyle: 'solid',
       borderWidth: 1,
       position: 'relative',
-      top: -50
+      top: -40
     },
     textInput: {
       fontFamily: "MontserratRegular",
@@ -116,21 +140,29 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       fontFamily: "MontserratMedium"
     },
-    // test
-    voiceButton: {
-      backgroundColor: "white",
-      paddingVertical: 15,
+    moodContainer: {
+      top: -25,
+      flexDirection: "row",
+      justifyContent: "space-between",
       alignItems: "center",
-      borderRadius: 100,
-      borderColor: "white",
-      width: windowWidth * 0.4,
-      height: windowHeight * 0.07,
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 3,
-      top: -10
-
+      backgroundColor: "#DFF6DD",
+      borderRadius: 10,
+      padding: 10,
+      width: windowWidth * 0.8,
+      marginVertical: 20,
+    },
+    emojiBox: {
+      padding: 10,
+      borderRadius: 10,
+      backgroundColor: "#F5F5F5",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    selectedEmojiBox: {
+      backgroundColor: "#8AB17D",
+    },
+    emoji: {
+      fontSize: 24,
     },
 
   });
