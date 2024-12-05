@@ -65,8 +65,7 @@ export default function Layout() {
         component={AddEntry}
         options={{
           presentation: "modal", // Makes it a modal
-          headerShown: true, // Show a header for the modal
-          title: "Add Journal Entry", // Header title for the modal
+          headerShown: false, // Show a header for the modal
         }}
       />
     </Stack.Navigator>

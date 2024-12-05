@@ -13,26 +13,25 @@ import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 
 import Theme from "@/assets/theme";
-//import Feed from "@/components/Feed";
 import Loading from "@/components/Loading";
 import db from "@/database/db";
 import useSession from "@/utils/useSession";
 import JournalComponent from "@/components/JournalComponent";
 import { useNavigation } from "expo-router";
+import * as Font from "expo-font";
 
-/*
-1) want to pass in data from home to journal.
-the data that I am pulling I want to save as a usestate in Home.js
-*/
-const { width, height } = Dimensions.get("window");
 
 export default function Journal() {
+  const [loaded] = Font.useFonts({
+    MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+    MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+  });
+    
   const navigation = useNavigation();
   
   const router = useRouter(); // to help navigate to another screen
   const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
-    // fetching the data
     try {
       const data = await db.from("JournalEntry").select("*");
       console.log("Journal Page: Here are all the fetched entries: ", data);
@@ -46,6 +45,10 @@ export default function Journal() {
     fetchData();
   }, []);
 
+  if (!loaded) {
+    return null; // Render nothing until fonts are loaded
+  }
+
   /*  if else statement for rendering */
   if (entry == null) {
     contentDisplayed = <Text style={styles.loadDataText}>Getting Data</Text>;
@@ -56,6 +59,9 @@ export default function Journal() {
         <View style={styles.headerContentContainer}>
           <Text style={styles.headerJournalTxt}>My Journals</Text>
         </View>
+        <View>
+          <Text style={styles.subheaderJournalTxt}>oh how you've grown!</Text>
+          </View>
 
         <FlatList
           data={entry} // no need to do entry.data
@@ -91,18 +97,28 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+
   },
   headerContentContainer: {
-    flexDirection: "row",
+    //flexDirection: "row",
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
-    backgroundColor: "#8AB17D" 
+    backgroundColor: "#8AB17D",
+    alignItems: 'center'
   },
   headerJournalTxt: {
     color: "white",
     fontWeight: "600",
     fontSize: "30",
+    fontFamily: "MontserratAlternates"
+  },
+  subheaderJournalTxt: {
+    fontSize: 18,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 24,
+    color: "white",
   },
   loadDataText: {
     color: "white",

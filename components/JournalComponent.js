@@ -1,4 +1,5 @@
 import { Text, View, FlatList, StyleSheet, SafeAreaView, Dimensions, Image } from 'react-native';
+import * as Font from "expo-font";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -9,7 +10,7 @@ export default function JournalComponent({timestamp, entryText}) {
     return (
         <View style={styles.outerBox}>
             <View style={styles.timeStampOuter}>
-                <Text style={styles.timeStampText}>{new Date(timestamp).toLocaleDateString()}</Text>
+                <Text style={styles.timeStampText}>{'📝' + new Date(timestamp).toLocaleDateString()}</Text>
             </View>
 
             <View style={styles.journalEntryOuter}>
@@ -39,9 +40,10 @@ const styles = StyleSheet.create({
         marginBottom: 8
     },
     timeStampText: {
-        color: '#555',
+        color: '#000',
         fontSize: 14,
-        fontWeight: '500'
+        fontWeight: '500',
+        fontFamily: 'MontserratMedium'
     },
     journalEntryOuter: {
         flexDirection: 2,
@@ -54,6 +56,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: "300",
         fontStyle: "normal",
+        fontFamily: "MontserratRegular"
         
     },
   

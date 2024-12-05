@@ -2,11 +2,23 @@ import React, { useState } from "react";
 import { StyleSheet, Text, SafeAreaView, TextInput, TouchableOpacity, Dimensions, View } from "react-native";
 import { useRouter } from "expo-router";
 import db from "@/database/db";
+import * as Font from "expo-font";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+
+
 export default function AddEntry() {
+const [loaded] = Font.useFonts({
+  MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+  MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+});
+  
+if (!loaded) {
+  return null; // Render nothing until fonts are loaded
+}
+
 // adding a comment for testing
   const router = useRouter();
   const [text, setText] = useState("");
@@ -32,17 +44,13 @@ export default function AddEntry() {
           <View style={styles.textInputContainer}>
             <TextInput
               style={styles.textInput}
-              placeholder="Write your entry here..."
+              placeholder="💭 Write your entry here..."
               multiline
               value={text}
               onChangeText={setText}
               />
           </View>
           {/*TEST */}
-          <TouchableOpacity style={styles.voiceButton} onPress={saveInputText}>
-            <Text style={styles.saveButtonText}>Microphone</Text>
-          </TouchableOpacity>
-
           <TouchableOpacity style={styles.saveInButton} onPress={saveInputText}>
             <Text style={styles.saveButtonText}>Save</Text>
           </TouchableOpacity>
@@ -64,7 +72,8 @@ const styles = StyleSheet.create({
       fontWeight: "bold",
       textAlign: "center",
       position: 'relative',
-      top: -60
+      top: -60,
+      fontFamily: "MontserratMedium",
     },
     textInputContainer: {
       backgroundColor: "white",
@@ -73,13 +82,14 @@ const styles = StyleSheet.create({
       height: windowHeight * 0.5,
       width: windowWidth * 0.8,
       borderRadius: 10,
-      borderColor: "grey",
+      borderColor: "#ddd",
       borderStyle: 'solid',
       borderWidth: 1,
       position: 'relative',
       top: -50
     },
     textInput: {
+      fontFamily: "MontserratRegular",
       backgroundColor: "white",
       fontSize: 16,
       height: windowHeight * 0.45,
@@ -104,6 +114,7 @@ const styles = StyleSheet.create({
       color: "black",
       fontSize: 20,
       fontWeight: "bold",
+      fontFamily: "MontserratMedium"
     },
     // test
     voiceButton: {
