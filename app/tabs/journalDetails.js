@@ -13,8 +13,9 @@ import { useNavigation } from "@react-navigation/native";
 
 export default function JournalDetails({ route }) {
   const navigation = useNavigation();
-  const { entryText, timestamp, postId } = route.params; // Ensure `postId` is included in params
+  const { entryText, timestamp, postId, mood } = route.params; // Ensure `postId` and `mood` are included in params
   const [text, setText] = useState(entryText); // Editable text state
+  const [selectedMood, setSelectedMood] = useState(mood || ""); // Editable mood state
   const [isSaving, setIsSaving] = useState(false); // Save state
 
   const handleSave = async () => {
@@ -27,7 +28,7 @@ export default function JournalDetails({ route }) {
 
       const { data, error } = await db
         .from("JournalEntry")
-        .update({ text }) // Update the text column
+        .update({ text, mood: selectedMood }) // Update the text and mood
         .eq("post_id", postId); // Match the row by `post_id`
 
       if (error) {
@@ -60,6 +61,22 @@ export default function JournalDetails({ route }) {
           placeholder="Edit your journal entry here..."
         />
 
+        {/* Mood Selector */}
+        <View style={styles.moodContainer}>
+          {["😊", "😢", "😠", "😎", "🥱"].map((emoji, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.emojiBox,
+                selectedMood === emoji && styles.selectedEmojiBox, // Highlight if selected
+              ]}
+              onPress={() => setSelectedMood(emoji)} // Update selected mood
+            >
+              <Text style={styles.emoji}>{emoji}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
         {/* Save Button */}
         <TouchableOpacity
           style={[styles.saveButton, isSaving && styles.disabledButton]}
@@ -91,10 +108,6 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginBottom: 16,
   },
-  entryText: {
-    fontSize: 16,
-    textAlign: "center",
-  },
   textInput: {
     width: "100%",
     height: 200,
@@ -106,6 +119,25 @@ const styles = StyleSheet.create({
     textAlignVertical: "top",
     backgroundColor: "#f9f9f9",
     marginBottom: 20,
+  },
+  moodContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 20,
+  },
+  emojiBox: {
+    padding: 10,
+    marginHorizontal: 5,
+    borderRadius: 10,
+    backgroundColor: "#F5F5F5",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  selectedEmojiBox: {
+    backgroundColor: "#8AB17D", // Highlight selected emoji
+  },
+  emoji: {
+    fontSize: 24,
   },
   saveButton: {
     backgroundColor: "#4CAF50", // Green color for save button
