@@ -44,6 +44,11 @@ export default function Journal() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", fetchData);
+    return unsubscribe; // Clean up the listener on unmount
+  }, [navigation]);
+
   if (!loaded) {
     return null; // Render nothing until fonts are loaded
   }
@@ -74,15 +79,15 @@ export default function Journal() {
               <TouchableOpacity
                 onPress={() =>
                   navigation.navigate("JournalDetails", {
+                    postId: item.post_id,
                     entryText: item.text,
                     timestamp: item.created_at,
                   })
                 }
               >
                 <JournalComponent
-                  entryText={item.text}
+                  entryText={item.text.substring(0, 100) + "..."}
                   timestamp={item.created_at}
-                  moodEmoji={item.mood}
                 />
               </TouchableOpacity>
             );

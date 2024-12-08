@@ -12,6 +12,8 @@ import db from "@/database/db";
 const HomePage = ({ navigation }) => {
   const [journalStreak, setJournalStreak] = useState(0); // Journal streak
   const [randomJournal, setRandomJournal] = useState(""); // Random journal reflection
+  const [randomPostId, setRandomPostId] = useState(null); // Post ID of the random journal
+  const [randomTimestamp, setRandomTimestamp] = useState(""); // Timestamp of the random journal
   const [workoutStreak, setWorkoutStreak] = useState(0); // Workout streak
   const [caloriesBurned, setCaloriesBurned] = useState(0); // Calories burned
 
@@ -32,9 +34,14 @@ const HomePage = ({ navigation }) => {
         setJournalStreak(journalData.length); // Number of journal entries in the last 7 days
         if (journalData.length > 0) {
           const randomIndex = Math.floor(Math.random() * journalData.length);
-          setRandomJournal(
-            journalData[randomIndex]?.text || "No reflection found."
-          );
+          const randomEntry = journalData[randomIndex];
+          setRandomJournal(randomEntry.text || "No reflection found.");
+          setRandomPostId(randomEntry.post_id); // Save the random journal's post ID
+          setRandomTimestamp(randomEntry.created_at); // Save the random journal's timestamp
+        } else {
+          setRandomJournal("No entries available.");
+          setRandomPostId(null);
+          setRandomTimestamp("");
         }
       }
 
@@ -68,6 +75,11 @@ const HomePage = ({ navigation }) => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", fetchData);
+    return unsubscribe; // Clean up the listener on unmount
+  }, [navigation]);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       {/* Header Section */}
@@ -88,7 +100,17 @@ const HomePage = ({ navigation }) => {
               Reflection from 2 days ago: {randomJournal}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Journal")}
+              onPress={() => {
+                if (randomPostId && randomTimestamp) {
+                  navigation.navigate("JournalDetails", {
+                    postId: randomPostId, // Pass the unique post ID
+                    entryText: randomJournal,
+                    timestamp: randomTimestamp,
+                  });
+                } else {
+                  console.warn("No journal entry to navigate to.");
+                }
+              }}
               style={styles.button}
             >
               <Text style={styles.buttonText}>How do you feel now?</Text>
