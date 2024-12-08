@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -7,9 +7,15 @@ import {
   StyleSheet,
   Alert,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import * as Font from "expo-font";
+import db from "../../database/db"; // Ensure this import is correct
 
+const NUTRITIONIX_API_URL =
+  "https://trackapi.nutritionix.com/v2/natural/exercise";
+const APP_ID = "42056e9e"; // Your Application ID
+const APP_KEY = "aa1b4ca1bd4fed735f4c8d3979166b4d"; // Your Application Key
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -18,6 +24,7 @@ const AddEntryModal = ({ navigation }) => {
   const [duration, setDuration] = useState("");
   const [calories, setCalories] = useState("");
   const [notes, setNotes] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // Load fonts
   const [loaded] = Font.useFonts({
@@ -29,6 +36,46 @@ const AddEntryModal = ({ navigation }) => {
     return null; // Render nothing until fonts are loaded
   }
 
+  // Function to fetch calories from Nutritionix
+  const fetchCalories = async () => {
+    if (!exercise || !duration) return;
+
+    setLoading(true); // Start loading indicator
+    try {
+      const response = await fetch(NUTRITIONIX_API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-app-id": APP_ID,
+          "x-app-key": APP_KEY,
+        },
+        body: JSON.stringify({
+          query: `${exercise} for ${duration} minutes`,
+        }),
+      });
+
+      const result = await response.json();
+      console.log("Nutritionix API response:", result);
+
+      if (result.exercises && result.exercises.length > 0) {
+        setCalories(Math.round(result.exercises[0].nf_calories)); // Use the first exercise's calories
+      } else {
+        Alert.alert("Error", "Could not calculate calories. Try again.");
+      }
+    } catch (error) {
+      console.error("Error fetching calories from Nutritionix API:", error);
+      Alert.alert("Error", "Failed to fetch calories. Please try again.");
+    } finally {
+      setLoading(false); // Stop loading indicator
+    }
+  };
+
+  // Automatically fetch calories when exercise or duration changes
+  useEffect(() => {
+    fetchCalories();
+  }, [exercise, duration]);
+
+  // Insert workout into the database
   const insertWorkout = async (entryData) => {
     try {
       const { data, error } = await db.from("WorkoutEntry").insert([entryData]);
@@ -44,6 +91,7 @@ const AddEntryModal = ({ navigation }) => {
     }
   };
 
+  // Handle submission of the form
   const handleAddWorkout = async () => {
     if (!exercise || !duration || !calories) {
       Alert.alert("Error", "Please fill out all required fields.");
@@ -62,8 +110,6 @@ const AddEntryModal = ({ navigation }) => {
     if (result) {
       Alert.alert("Success", "Workout added successfully!");
       navigation.goBack(); // Close the modal
-    } else {
-      Alert.alert("Error", "Failed to add workout. Please try again.");
     }
   };
 
@@ -83,13 +129,14 @@ const AddEntryModal = ({ navigation }) => {
         onChangeText={setDuration}
         keyboardType="numeric"
       />
-      <TextInput
-        placeholder="Calories Burned"
-        style={styles.input}
-        value={calories}
-        onChangeText={setCalories}
-        keyboardType="numeric"
-      />
+      <Text style={styles.caloriesText}>
+        Calories Burned:{" "}
+        {loading ? (
+          <ActivityIndicator size="small" color="tomato" />
+        ) : (
+          calories || "Waiting for exercise input..."
+        )}
+      </Text>
       <TextInput
         placeholder="Notes (optional)"
         style={[styles.input, styles.notesInput]}
@@ -113,7 +160,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontFamily: "MontserratMedium",
-    marginBottom: windowHeight * 0.2,
+    marginBottom: windowHeight * 0.05,
     textAlign: "center",
   },
   input: {
@@ -127,6 +174,12 @@ const styles = StyleSheet.create({
   notesInput: {
     height: 80,
     textAlignVertical: "top",
+  },
+  caloriesText: {
+    fontSize: 16,
+    fontFamily: "MontserratRegular",
+    color: "#555",
+    marginBottom: 12,
   },
   addButton: {
     backgroundColor: "tomato",

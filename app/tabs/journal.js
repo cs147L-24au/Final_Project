@@ -13,26 +13,24 @@ import { useState, useEffect } from "react";
 import { useRouter } from "expo-router";
 
 import Theme from "@/assets/theme";
-//import Feed from "@/components/Feed";
 import Loading from "@/components/Loading";
 import db from "@/database/db";
 import useSession from "@/utils/useSession";
 import JournalComponent from "@/components/JournalComponent";
 import { useNavigation } from "expo-router";
-
-/*
-1) want to pass in data from home to journal.
-the data that I am pulling I want to save as a usestate in Home.js
-*/
-const { width, height } = Dimensions.get("window");
+import * as Font from "expo-font";
 
 export default function Journal() {
+  const [loaded] = Font.useFonts({
+    MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+    MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+  });
+
   const navigation = useNavigation();
 
   const router = useRouter(); // to help navigate to another screen
   const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
-    // fetching the data
     try {
       const data = await db.from("JournalEntry").select("*");
       console.log("Journal Page: Here are all the fetched entries: ", data);
@@ -46,6 +44,10 @@ export default function Journal() {
     fetchData();
   }, []);
 
+  if (!loaded) {
+    return null; // Render nothing until fonts are loaded
+  }
+
   /*  if else statement for rendering */
   if (entry == null) {
     contentDisplayed = <Text style={styles.loadDataText}>Getting Data</Text>;
@@ -54,7 +56,12 @@ export default function Journal() {
     contentDisplayed = (
       <SafeAreaView style={styles.entryListContainer}>
         <View style={styles.headerContentContainer}>
-          <Text style={styles.headerJournalTxt}>My Journals</Text>
+          <Text style={styles.headerJournalTxt}>
+            Your Mental Wellness Journey
+          </Text>
+        </View>
+        <View>
+          <Text style={styles.subheaderJournalTxt}>oh how you've grown!</Text>
         </View>
 
         <FlatList
@@ -73,8 +80,9 @@ export default function Journal() {
                 }
               >
                 <JournalComponent
-                  entryText={item.text.substring(0, 100) + "..."} // Truncated text
+                  entryText={item.text}
                   timestamp={item.created_at}
+                  moodEmoji={item.mood}
                 />
               </TouchableOpacity>
             );
@@ -103,16 +111,25 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerContentContainer: {
-    flexDirection: "row",
+    //flexDirection: "row",
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
     backgroundColor: "#8AB17D",
+    alignItems: "center",
   },
   headerJournalTxt: {
     color: "white",
-    fontWeight: "600",
+    fontWeight: "bold",
     fontSize: "30",
+    fontFamily: "MontserratAlternates",
+  },
+  subheaderJournalTxt: {
+    fontSize: 18,
+    color: "#666",
+    textAlign: "center",
+    marginBottom: 24,
+    color: "white",
   },
   loadDataText: {
     color: "white",
