@@ -112,8 +112,8 @@ const styles = StyleSheet.create({
   headerJournalTxt: {
     color: "white",
     fontWeight: 'bold',
-    fontSize: "30",
-    fontFamily: "MontserratAlternates",
+    fontSize: "28",
+    fontFamily: "MontserratAlternates", // this is header 
   },
   subheaderJournalTxt: {
     fontSize: 18,
