@@ -76,7 +76,7 @@ export default function Journal() {
         />
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate("popUps/addEntry")} // Goes to add journal
+          onPress={() => navigation.navigate("AddEntry")} // Goes to add journal
         >
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
