@@ -6,82 +6,77 @@ import {
   View,
   TouchableOpacity,
   Dimensions,
-  Alert,
 } from "react-native";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useFocusEffect } from "@react-navigation/native";
 
-import { useRouter } from "expo-router";
-
-import Theme from "@/assets/theme";
-import Loading from "@/components/Loading";
 import db from "@/database/db";
-import useSession from "@/utils/useSession";
 import JournalComponent from "@/components/JournalComponent";
 import { useNavigation } from "expo-router";
-import * as Font from "expo-font";
+
+const { width, height } = Dimensions.get("window");
 
 export default function Journal() {
-  const [loaded] = Font.useFonts({
-    MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
-    MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
-  });
-
   const navigation = useNavigation();
+  const [entry, setEntry] = useState(null); // Where journal entries are stored
 
-  const router = useRouter(); // to help navigate to another screen
-  const [entry, setEntry] = useState(null); // where I will store data
   const fetchData = async () => {
     try {
-      const data = await db.from("JournalEntry").select("*");
-      console.log("Journal Page: Here are all the fetched entries: ", data);
-      setEntry(data.data); // grabbing data
+      const { data, error } = await db.from("JournalEntry").select("*");
+      if (error) {
+        console.error("Error fetching journal data:", error);
+      } else {
+        console.log("Fetched entries: ", data); // Log fetched data
+        setEntry(data); // Update state
+      }
     } catch (err) {
-      console.error("Error: failed to setPosts: ", err);
+      console.error("Error fetching data:", err);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // Re-fetch data when navigating back to the screen
+  useFocusEffect(
+    useCallback(() => {
+      console.log("Fetching data on focus...");
+      fetchData();
+    }, [])
+  );
 
-  if (!loaded) {
-    return null; // Render nothing until fonts are loaded
-  }
-
-  /*  if else statement for rendering */
+  /* If else statement for rendering */
   if (entry == null) {
-    contentDisplayed = <Text style={styles.loadDataText}>Getting Data</Text>;
+    contentDisplayed = <Text style={styles.loadDataText}>Getting Data...</Text>;
   } else {
-    console.log("changed component", entry); // no need to do entry.data
     contentDisplayed = (
       <SafeAreaView style={styles.entryListContainer}>
         <View style={styles.headerContentContainer}>
-          <Text style={styles.headerJournalTxt}>
-            Your Mental Wellness Journey
-          </Text>
-        </View>
-        <View>
-          <Text style={styles.subheaderJournalTxt}>
-            oh how you've grown!
-            </Text>
+          <Text style={styles.headerJournalTxt}>My Journals</Text>
         </View>
 
         <FlatList
-          data={entry} // no need to do entry.data
-          renderItem={({ item }) => {
-            console.log("here is item", item);
-            return (
+          data={entry}
+          keyExtractor={(item) => item.post_id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("JournalDetails", {
+                  postId: item.post_id,
+                  entryText: item.text,
+                  timestamp: item.created_at,
+                  mood: item.mood, // Pass mood to details page
+                })
+              }
+            >
               <JournalComponent
-                entryText={item.text}
+                entryText={item.text.substring(0, 100) + "..."}
                 timestamp={item.created_at}
-                moodEmoji={item.mood}
+                moodEmoji={item.mood} // Pass mood to component
               />
-            );
-          }}
+            </TouchableOpacity>
+          )}
         />
         <TouchableOpacity
           style={styles.addButton}
-          onPress={() => navigation.navigate("AddEntry")} // goes to add journal
+          onPress={() => navigation.navigate("popUps/addEntry")} // Goes to add journal
         >
           <Text style={styles.addButtonText}>+</Text>
         </TouchableOpacity>
@@ -96,24 +91,23 @@ export default function Journal() {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#8AB17D", //  above header
+    backgroundColor: "#8AB17D",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
   headerContentContainer: {
-    //flexDirection: "row",
+    flexDirection: "row",
     justifyContent: "center",
     marginTop: 20,
     marginBottom: 20,
     backgroundColor: "#8AB17D",
-    alignItems: "center",
   },
   headerJournalTxt: {
     color: "white",
     fontWeight: 'bold',
-    fontSize: "28",
-    fontFamily: "MontserratAlternates", // this is header 
+    fontSize: "30",
+    fontFamily: "MontserratAlternates",
   },
   subheaderJournalTxt: {
     fontSize: 18,
@@ -125,7 +119,7 @@ const styles = StyleSheet.create({
   loadDataText: {
     color: "white",
     fontWeight: "600",
-    fontSize: "15",
+    fontSize: 15,
   },
   entryListContainer: {
     flex: 1,

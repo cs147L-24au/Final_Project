@@ -54,7 +54,7 @@ export default function Layout() {
         component={AddEntryModal}
         options={{
           presentation: "modal", // Makes it a modal
-          headerShown: false, 
+          headerShown: false,
         }}
       />
 
@@ -64,6 +64,15 @@ export default function Layout() {
         options={{
           presentation: "modal", // Makes it a modal
           headerShown: false, // Show a header for the modal
+        }}
+      />
+
+      <Stack.Screen
+        name="JournalDetails"
+        component={require("./journalDetails").default} // Dynamically load the screen
+        options={{
+          headerShown: true, // Show a header for the details page
+          title: "Journal Details", // Set a title for the header
         }}
       />
     </Stack.Navigator>

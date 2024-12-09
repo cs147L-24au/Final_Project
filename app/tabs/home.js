@@ -12,9 +12,10 @@ import db from "@/database/db";
 const HomePage = ({ navigation }) => {
   const [journalStreak, setJournalStreak] = useState(0); // Journal streak
   const [randomJournal, setRandomJournal] = useState(""); // Random journal reflection
+  const [randomPostId, setRandomPostId] = useState(null); // Post ID of the random journal
+  const [randomTimestamp, setRandomTimestamp] = useState(""); // Timestamp of the random journal
   const [workoutStreak, setWorkoutStreak] = useState(0); // Workout streak
   const [caloriesBurned, setCaloriesBurned] = useState(0); // Calories burned
-  const [userName, setUserName] = useState("User"); // Placeholder for user name
 
   const fetchData = async () => {
     try {
@@ -33,9 +34,14 @@ const HomePage = ({ navigation }) => {
         setJournalStreak(journalData.length); // Number of journal entries in the last 7 days
         if (journalData.length > 0) {
           const randomIndex = Math.floor(Math.random() * journalData.length);
-          setRandomJournal(
-            journalData[randomIndex]?.text || "No reflection found."
-          );
+          const randomEntry = journalData[randomIndex];
+          setRandomJournal(randomEntry.text || "No reflection found.");
+          setRandomPostId(randomEntry.post_id); // Save the random journal's post ID
+          setRandomTimestamp(randomEntry.created_at); // Save the random journal's timestamp
+        } else {
+          setRandomJournal("No entries available.");
+          setRandomPostId(null);
+          setRandomTimestamp("");
         }
       }
 
@@ -60,28 +66,19 @@ const HomePage = ({ navigation }) => {
         );
         setCaloriesBurned(totalCalories); // Total calories burned
       }
-
-      // Fetch user name
-      const { data: userData, error: userError } = await db
-        .from("Users") // Replace with your Supabase user table name
-        .select("name")
-        .single();
-
-      if (userError) {
-        console.error("Error fetching user name:", userError);
-      } else if (userData) {
-        setUserName(userData.name || "User");
-      }
-
-      console.log("Fetched data successfully!");
     } catch (err) {
-      console.error("Unexpected error fetching data:", err);
+      console.error("Unexpected error in fetchData:", err); // Catch any unexpected errors
     }
   };
 
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", fetchData);
+    return unsubscribe; // Clean up the listener on unmount
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -103,7 +100,17 @@ const HomePage = ({ navigation }) => {
               Reflection from 2 days ago: {randomJournal}
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Journal")}
+              onPress={() => {
+                if (randomPostId && randomTimestamp) {
+                  navigation.navigate("JournalDetails", {
+                    postId: randomPostId, // Pass the unique post ID
+                    entryText: randomJournal,
+                    timestamp: randomTimestamp,
+                  });
+                } else {
+                  console.warn("No journal entry to navigate to.");
+                }
+              }}
               style={styles.button}
             >
               <Text style={styles.buttonText}>How do you feel now?</Text>
