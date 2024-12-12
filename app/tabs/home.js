@@ -81,20 +81,6 @@ const HomePage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", fetchData);
-    return unsubscribe;
-  }, [navigation]);
-
-  if (!fontsLoaded) {
-    return <Text>Loading Fonts...</Text>;
-  }
-
-  //fetch quote api
   const fetchQuote = async () => {
     try {
       const category = "inspirational";
@@ -118,42 +104,37 @@ const HomePage = () => {
     }
   };
 
+  // Fetch data when component mounts
   useEffect(() => {
+    fetchData();
     fetchQuote();
   }, []);
+
+  // Refresh data when screen is focused
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchData();
+      fetchQuote();
+    });
+    return unsubscribe;
+  }, [navigation]);
+
+  if (!fontsLoaded) {
+    return <Text>Loading Fonts...</Text>;
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text
-          style={[
-            styles.greeting,
-            { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
-          ]}
-        >
-          Hello, there!
-        </Text>
+        <Text style={styles.greeting}>Hello, there!</Text>
       </View>
 
       <View style={styles.contentContainer}>
-        <Text
-          style={[
-            styles.sectionTitle,
-            { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
-          ]}
-        >
-          Your Week at a Glance
-        </Text>
-
+        <Text style={styles.sectionTitle}>Your Week at a Glance</Text>
         <View style={styles.overview}>
+          {/* Journal Section */}
           <View style={styles.box}>
-            <Text
-              style={[
-                styles.boxTitle,
-                { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
-              ]}
-            >
-              Journal Entries
-            </Text>
+            <Text style={styles.boxTitle}>Journal Entries</Text>
             <Text style={styles.streak}>{journalStreak}/7 Days</Text>
             <Text style={styles.reflection}>
               Reflection from 2 days ago: {randomJournal}
@@ -176,15 +157,9 @@ const HomePage = () => {
             </TouchableOpacity>
           </View>
 
+          {/* Workout Section */}
           <View style={styles.box}>
-            <Text
-              style={[
-                styles.boxTitle,
-                { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
-              ]}
-            >
-              Workout Streak
-            </Text>
+            <Text style={styles.boxTitle}>Workout Streak</Text>
             <Text style={styles.streak}>{workoutStreak}/7 Days</Text>
             <Text style={styles.reflection}>
               Burned {caloriesBurned} Calories 🔥
