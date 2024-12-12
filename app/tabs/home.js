@@ -5,23 +5,33 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-
 import { useEffect, useState } from "react";
 import db from "@/database/db";
+import { useNavigation } from "expo-router";
+import * as Font from "expo-font";
+import axios from "axios";
 
-const HomePage = ({ navigation }) => {
-  const [journalStreak, setJournalStreak] = useState(0); // Journal streak
-  const [randomJournal, setRandomJournal] = useState(""); // Random journal reflection
-  const [randomPostId, setRandomPostId] = useState(null); // Post ID of the random journal
-  const [randomTimestamp, setRandomTimestamp] = useState(""); // Timestamp of the random journal
-  const [workoutStreak, setWorkoutStreak] = useState(0); // Workout streak
-  const [caloriesBurned, setCaloriesBurned] = useState(0); // Calories burned
+const HomePage = () => {
+  const [fontsLoaded] = Font.useFonts({
+    MontserratAlternates: require("../../assets/Montserrat_Alternates/MontserratAlternates-ExtraBold.ttf"),
+  });
+
+  const [journalStreak, setJournalStreak] = useState(0);
+  const [randomJournal, setRandomJournal] = useState("");
+  const [randomPostId, setRandomPostId] = useState(null);
+  const [randomTimestamp, setRandomTimestamp] = useState("");
+  const [workoutStreak, setWorkoutStreak] = useState(0);
+  const [caloriesBurned, setCaloriesBurned] = useState(0);
+  const [quoteText, setQuoteText] = useState("");
+  const [quoteAuthor, setQuoteAuthor] = useState("");
+
+  const navigation = useNavigation();
 
   const fetchData = async () => {
     try {
       // Fetch journal entries
       const { data: journalData, error: journalError } = await db
-        .from("JournalEntry") // Replace with your Supabase table name
+        .from("JournalEntry")
         .select("*")
         .gte(
           "created_at",
@@ -31,13 +41,13 @@ const HomePage = ({ navigation }) => {
       if (journalError) {
         console.error("Error fetching journal data:", journalError);
       } else if (journalData) {
-        setJournalStreak(journalData.length); // Number of journal entries in the last 7 days
+        setJournalStreak(journalData.length);
         if (journalData.length > 0) {
           const randomIndex = Math.floor(Math.random() * journalData.length);
           const randomEntry = journalData[randomIndex];
           setRandomJournal(randomEntry.text || "No reflection found.");
-          setRandomPostId(randomEntry.post_id); // Save the random journal's post ID
-          setRandomTimestamp(randomEntry.created_at); // Save the random journal's timestamp
+          setRandomPostId(randomEntry.post_id);
+          setRandomTimestamp(randomEntry.created_at);
         } else {
           setRandomJournal("No entries available.");
           setRandomPostId(null);
@@ -47,7 +57,7 @@ const HomePage = ({ navigation }) => {
 
       // Fetch workout entries
       const { data: workoutData, error: workoutError } = await db
-        .from("WorkoutEntry") // Replace with your Supabase table name
+        .from("WorkoutEntry")
         .select("calories, created_at")
         .gte(
           "created_at",
@@ -59,15 +69,15 @@ const HomePage = ({ navigation }) => {
         setWorkoutStreak(0);
         setCaloriesBurned(0);
       } else if (workoutData) {
-        setWorkoutStreak(workoutData.length); // Number of workout entries in the last 7 days
+        setWorkoutStreak(workoutData.length);
         const totalCalories = workoutData.reduce(
           (sum, workout) => sum + (workout.calories || 0),
           0
         );
-        setCaloriesBurned(totalCalories); // Total calories burned
+        setCaloriesBurned(totalCalories);
       }
     } catch (err) {
-      console.error("Unexpected error in fetchData:", err); // Catch any unexpected errors
+      console.error("Unexpected error in fetchData:", err);
     }
   };
 
@@ -77,33 +87,83 @@ const HomePage = ({ navigation }) => {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", fetchData);
-    return unsubscribe; // Clean up the listener on unmount
+    return unsubscribe;
   }, [navigation]);
 
+  if (!fontsLoaded) {
+    return <Text>Loading Fonts...</Text>;
+  }
+
+  //fetch quote api
+  const fetchQuote = async () => {
+    try {
+      const category = "inspirational";
+      const apiUrl = `https://api.api-ninjas.com/v1/quotes?category=${category}`;
+      const response = await axios.get(apiUrl, {
+        headers: {
+          "X-Api-Key": "+Vn15D29q6nYruzh1zGK7Q==ymMZbR3C1CwVyY0M",
+        },
+      });
+
+      if (response.status === 200) {
+        const quote = response.data[0].quote;
+        const author = response.data[0].author;
+        setQuoteText(quote);
+        setQuoteAuthor(author);
+      } else {
+        console.error("Error fetching quote:", response.status, response.data);
+      }
+    } catch (error) {
+      console.error("Error fetching quote:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchQuote();
+  }, []);
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {/* Header Section */}
+    <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.greeting}>Hello, there!</Text>
+        <Text
+          style={[
+            styles.greeting,
+            { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
+          ]}
+        >
+          Hello, there!
+        </Text>
       </View>
 
-      {/* Weekly Overview Section */}
       <View style={styles.contentContainer}>
-        <Text style={styles.sectionTitle}>Your Week at a Glance</Text>
+        <Text
+          style={[
+            styles.sectionTitle,
+            { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
+          ]}
+        >
+          Your Week at a Glance
+        </Text>
 
         <View style={styles.overview}>
-          {/* Journal Streak */}
           <View style={styles.box}>
-            <Text style={styles.boxTitle}>Journal Entries</Text>
+            <Text
+              style={[
+                styles.boxTitle,
+                { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
+              ]}
+            >
+              Journal Entries
+            </Text>
             <Text style={styles.streak}>{journalStreak}/7 Days</Text>
             <Text style={styles.reflection}>
               Reflection from 2 days ago: {randomJournal}
             </Text>
             <TouchableOpacity
+              style={styles.button}
               onPress={() => {
                 if (randomPostId && randomTimestamp) {
                   navigation.navigate("JournalDetails", {
-                    postId: randomPostId, // Pass the unique post ID
+                    postId: randomPostId,
                     entryText: randomJournal,
                     timestamp: randomTimestamp,
                   });
@@ -111,22 +171,27 @@ const HomePage = ({ navigation }) => {
                   console.warn("No journal entry to navigate to.");
                 }
               }}
-              style={styles.button}
             >
               <Text style={styles.buttonText}>How do you feel now?</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Workout Streak */}
           <View style={styles.box}>
-            <Text style={styles.boxTitle}>Workout Streak</Text>
+            <Text
+              style={[
+                styles.boxTitle,
+                { fontFamily: fontsLoaded ? "MontserratAlternates" : null },
+              ]}
+            >
+              Workout Streak
+            </Text>
             <Text style={styles.streak}>{workoutStreak}/7 Days</Text>
             <Text style={styles.reflection}>
               Burned {caloriesBurned} Calories 🔥
             </Text>
             <TouchableOpacity
-              onPress={() => navigation.navigate("Workouts")}
               style={styles.button}
+              onPress={() => navigation.navigate("Workouts")}
             >
               <Text style={styles.buttonText}>Keep it up!</Text>
             </TouchableOpacity>
@@ -134,27 +199,29 @@ const HomePage = ({ navigation }) => {
         </View>
       </View>
 
-      {/* Quote of the Day Section */}
       <View style={styles.quoteContainer}>
-        <Text style={styles.quote}>"Consistency is the key to progress."</Text>
+        <Text style={styles.quote}>{quoteText}</Text>
+        <Text style={styles.quoteAuthor}>- {quoteAuthor}</Text>
       </View>
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#E9C46A", // Light pastel yellow
     paddingHorizontal: 16,
+    paddingTop: 50,
   },
   header: {
-    marginTop: 50,
     marginBottom: 24,
+    marginTop: 30,
   },
   greeting: {
     fontSize: 24,
-    fontWeight: "bold", // Placeholder for custom font
+    fontWeight: "bold",
+    textAlign: "center",
   },
   contentContainer: {
     flex: 1,
@@ -163,59 +230,82 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 18,
-    fontWeight: "bold", // Placeholder for custom font
+    fontWeight: "bold",
     marginBottom: 24,
+    textAlign: "center",
   },
   overview: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    marginBottom: 24,
   },
   box: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#f5f5f5",
+    backgroundColor: "#FFFFFF",
     borderRadius: 8,
     marginHorizontal: 8,
     alignItems: "center",
+    justifyContent: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   boxTitle: {
     fontSize: 16,
-    fontWeight: "bold", // Placeholder for custom font
+    fontWeight: "bold",
     marginBottom: 8,
   },
   streak: {
     fontSize: 14,
-    color: "#555",
     marginBottom: 8,
   },
   reflection: {
     fontSize: 12,
-    color: "#666",
-    marginBottom: 16,
     textAlign: "center",
+    marginBottom: 16,
   },
   button: {
+    backgroundColor: "#007BFF",
     paddingVertical: 8,
     paddingHorizontal: 16,
-    backgroundColor: "#007BFF",
     borderRadius: 8,
   },
   buttonText: {
-    color: "#fff",
-    textAlign: "center",
+    color: "#FFFFFF",
     fontSize: 14,
+    //fontWeight: "bold",
+    textAlign: "center",
   },
   quoteContainer: {
+    backgroundColor: "#FFFFFF",
     padding: 16,
-    backgroundColor: "#f5f5f5",
     borderRadius: 8,
-    marginTop: 24,
+    marginBottom: 24,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   quote: {
     fontStyle: "italic",
     textAlign: "center",
     fontSize: 16,
+  },
+  quoteAuthor: {
+    textAlign: "right",
+    fontStyle: "italic",
+    marginTop: 8,
   },
 });
 
