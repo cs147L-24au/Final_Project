@@ -4,6 +4,7 @@ import {
   StyleSheet,
   SafeAreaView,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { useEffect, useState } from "react";
 import db from "@/database/db";
@@ -96,28 +97,16 @@ const HomePage = () => {
         const author = response.data[0].author;
         setQuoteText(quote);
         setQuoteAuthor(author);
-      } else {
-        console.error("Error fetching quote:", response.status, response.data);
       }
     } catch (error) {
       console.error("Error fetching quote:", error);
     }
   };
 
-  // Fetch data when component mounts
   useEffect(() => {
     fetchData();
     fetchQuote();
   }, []);
-
-  // Refresh data when screen is focused
-  useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      fetchData();
-      fetchQuote();
-    });
-    return unsubscribe;
-  }, [navigation]);
 
   if (!fontsLoaded) {
     return <Text>Loading Fonts...</Text>;
@@ -125,14 +114,15 @@ const HomePage = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Hello, there!</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        {/* Header Section */}
+        <Text style={[styles.title, { fontFamily: "MontserratAlternates" }]}>
+          Hello, there!
+        </Text>
+        <Text style={styles.subtitle}>Your Week at a Glance</Text>
 
-      <View style={styles.contentContainer}>
-        <Text style={styles.sectionTitle}>Your Week at a Glance</Text>
+        {/* Overview Section */}
         <View style={styles.overview}>
-          {/* Journal Section */}
           <View style={styles.box}>
             <Text style={styles.boxTitle}>Journal Entries</Text>
             <Text style={styles.streak}>{journalStreak}/7 Days</Text>
@@ -148,8 +138,6 @@ const HomePage = () => {
                     entryText: randomJournal,
                     timestamp: randomTimestamp,
                   });
-                } else {
-                  console.warn("No journal entry to navigate to.");
                 }
               }}
             >
@@ -157,7 +145,6 @@ const HomePage = () => {
             </TouchableOpacity>
           </View>
 
-          {/* Workout Section */}
           <View style={styles.box}>
             <Text style={styles.boxTitle}>Workout Streak</Text>
             <Text style={styles.streak}>{workoutStreak}/7 Days</Text>
@@ -172,12 +159,20 @@ const HomePage = () => {
             </TouchableOpacity>
           </View>
         </View>
-      </View>
 
-      <View style={styles.quoteContainer}>
-        <Text style={styles.quote}>{quoteText}</Text>
-        <Text style={styles.quoteAuthor}>- {quoteAuthor}</Text>
-      </View>
+        {/* Quote Section */}
+
+        <View style={styles.quoteContainer}>
+          <Text style={styles.quote}>{quoteText}</Text>
+          <Text style={styles.quoteAuthor}>- {quoteAuthor}</Text>
+          <TouchableOpacity
+            style={styles.regenerateButton}
+            onPress={fetchQuote}
+          >
+            <Text style={styles.regenerateButtonText}>Regenerate Quote</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -185,49 +180,44 @@ const HomePage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#E9C46A", // Light pastel yellow
+    backgroundColor: "#E9C46A",
+    paddingHorizontal: 16, // Add padding on both sides of the screen
+    paddingTop: 24, // Adjust the top padding for a balanced look
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    //justifyContent: "space-between",
     paddingHorizontal: 16,
-    paddingTop: 50,
+    paddingTop: 24,
   },
-  header: {
-    marginBottom: 24,
-    marginTop: 30,
-  },
-  greeting: {
-    fontSize: 24,
+  title: {
+    fontSize: 28,
     fontWeight: "bold",
     textAlign: "center",
+    marginTop: 24,
+    marginBottom: 16,
+    color: "white",
   },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  sectionTitle: {
+  subtitle: {
     fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 24,
+    color: "white",
     textAlign: "center",
+    marginBottom: 32, // Add more space below the subtitle
   },
   overview: {
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
-    marginBottom: 24,
+    marginVertical: 16, // Space between the overview and other sections
   },
   box: {
     flex: 1,
     padding: 16,
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
-    marginHorizontal: 8,
+    marginHorizontal: 8, // Add spacing between boxes
     alignItems: "center",
-    justifyContent: "center",
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
@@ -255,19 +245,16 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#FFFFFF",
     fontSize: 14,
-    //fontWeight: "bold",
     textAlign: "center",
   },
   quoteContainer: {
     backgroundColor: "#FFFFFF",
     padding: 16,
     borderRadius: 8,
-    marginBottom: 24,
+    marginHorizontal: 8, // Ensure some padding around the quote container
+    marginTop: 32, // Push the quote section further down
     shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
