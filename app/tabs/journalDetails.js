@@ -6,17 +6,34 @@ import {
   TextInput,
   TouchableOpacity,
   Alert,
+  Dimensions,
+  KeyboardAvoidingView,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useState } from "react";
 import db from "@/database/db";
 import { useNavigation } from "@react-navigation/native";
+import * as Font from "expo-font";
+
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 export default function JournalDetails({ route }) {
   const navigation = useNavigation();
-  const { entryText, timestamp, postId, mood } = route.params; // Ensure `postId` and `mood` are included in params
-  const [text, setText] = useState(entryText); // Editable text state
-  const [selectedMood, setSelectedMood] = useState(mood || ""); // Editable mood state
-  const [isSaving, setIsSaving] = useState(false); // Save state
+  const { entryText, timestamp, postId, mood } = route.params;
+  const [loaded] = Font.useFonts({
+    MontserratMedium: require("../../assets/Montserrat_Alternates/MontserratAlternates-Medium.ttf"),
+    MontserratRegular: require("../../assets/Montserrat_Alternates/MontserratAlternates-Regular.ttf"),
+  });
+
+  const [text, setText] = useState(entryText);
+  const [selectedMood, setSelectedMood] = useState(mood || null);
+  const [isSaving, setIsSaving] = useState(false);
+
+  if (!loaded) {
+    return null;
+  }
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -28,15 +45,15 @@ export default function JournalDetails({ route }) {
 
       const { data, error } = await db
         .from("JournalEntry")
-        .update({ text, mood: selectedMood }) // Update the text and mood
-        .eq("post_id", postId); // Match the row by `post_id`
+        .update({ text, mood: selectedMood })
+        .eq("post_id", postId);
 
       if (error) {
         console.error("Error updating journal entry:", error);
         Alert.alert("Error", "Failed to save changes. Please try again.");
       } else {
         Alert.alert("Success", "Your entry has been updated!");
-        navigation.goBack(); // Go back to the previous screen
+        navigation.goBack();
       }
     } catch (err) {
       console.error("Unexpected error:", err);
@@ -48,46 +65,49 @@ export default function JournalDetails({ route }) {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.entryContainer}>
-        {/* Display timestamp */}
-        <Text style={styles.date}>{new Date(timestamp).toDateString()}</Text>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
+          <Text style={styles.title}>Edit Journal Entry</Text>
 
-        {/* Editable TextInput */}
-        <TextInput
-          style={styles.textInput}
-          multiline
-          value={text}
-          onChangeText={(value) => setText(value)}
-          placeholder="Edit your journal entry here..."
-        />
+          <View style={styles.textInputContainer}>
+            <TextInput
+              style={styles.textInput}
+              multiline
+              value={text}
+              onChangeText={(value) => setText(value)}
+              placeholder="Edit your journal entry here..."
+            />
+          </View>
 
-        {/* Mood Selector */}
-        <View style={styles.moodContainer}>
-          {["😊", "😢", "😠", "😎", "🥱"].map((emoji, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                styles.emojiBox,
-                selectedMood === emoji && styles.selectedEmojiBox, // Highlight if selected
-              ]}
-              onPress={() => setSelectedMood(emoji)} // Update selected mood
-            >
-              <Text style={styles.emoji}>{emoji}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
+          <View style={styles.moodContainer}>
+            {["😊", "😢", "😡", "😴", "😃", "🤔"].map((emoji, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.emojiBox,
+                  selectedMood === emoji && styles.selectedEmojiBox,
+                ]}
+                onPress={() => setSelectedMood(emoji)}
+              >
+                <Text style={styles.emoji}>{emoji}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
 
-        {/* Save Button */}
-        <TouchableOpacity
-          style={[styles.saveButton, isSaving && styles.disabledButton]}
-          onPress={handleSave}
-          disabled={isSaving} // Disable button while saving
-        >
-          <Text style={styles.saveButtonText}>
-            {isSaving ? "Saving..." : "Save"}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          <TouchableOpacity
+            style={[styles.saveInButton, isSaving && styles.disabledButton]}
+            onPress={handleSave}
+            disabled={isSaving}
+          >
+            <Text style={styles.saveButtonText}>
+              {isSaving ? "Saving..." : "Save"}
+            </Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
@@ -95,64 +115,82 @@ export default function JournalDetails({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFFF",
-    padding: 16,
-  },
-  entryContainer: {
-    flex: 1,
+    backgroundColor: "#8AB17D",
+    padding: 20,
     justifyContent: "center",
     alignItems: "center",
   },
-  date: {
-    fontSize: 18,
+  title: {
+    color: "white",
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 16,
+    textAlign: "center",
+    marginTop: 50,
+    marginBottom: 20,
+    fontFamily: "MontserratMedium",
+  },
+  textInputContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    justifyContent: "center",
+    height: windowHeight * 0.5,
+    width: windowWidth * 0.8,
+    borderRadius: 10,
+    borderColor: "#ddd",
+    borderWidth: 1,
+    marginBottom: 20,
   },
   textInput: {
-    width: "100%",
-    height: 200,
-    borderWidth: 1,
-    borderColor: "#ddd",
-    borderRadius: 8,
-    padding: 10,
+    fontFamily: "MontserratRegular",
+    backgroundColor: "white",
     fontSize: 16,
+    height: windowHeight * 0.45,
     textAlignVertical: "top",
-    backgroundColor: "#f9f9f9",
-    marginBottom: 20,
   },
   moodContainer: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#DFF6DD",
+    borderRadius: 10,
+    padding: 10,
+    width: windowWidth * 0.8,
     marginBottom: 20,
   },
   emojiBox: {
     padding: 10,
-    marginHorizontal: 5,
     borderRadius: 10,
     backgroundColor: "#F5F5F5",
     alignItems: "center",
     justifyContent: "center",
   },
   selectedEmojiBox: {
-    backgroundColor: "#8AB17D", // Highlight selected emoji
+    backgroundColor: "#8AB17D",
   },
   emoji: {
     fontSize: 24,
   },
-  saveButton: {
-    backgroundColor: "#4CAF50", // Green color for save button
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 8,
+  saveInButton: {
+    backgroundColor: "#264653",
+    paddingVertical: 15,
     alignItems: "center",
-    justifyContent: "center",
+    borderRadius: 8,
+    borderColor: "white",
+    width: windowWidth * 0.4,
+    height: windowHeight * 0.07,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+    alignSelf: "center",
   },
   saveButtonText: {
-    color: "#FFFFFF",
-    fontSize: 16,
+    color: "white",
+    fontSize: 20,
     fontWeight: "bold",
+    fontFamily: "MontserratMedium",
   },
   disabledButton: {
-    backgroundColor: "#A5D6A7", // Lighter green when disabled
+    backgroundColor: "#A5D6A7",
   },
 });

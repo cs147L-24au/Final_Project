@@ -33,7 +33,6 @@ function TabNavigator() {
       <Tab.Screen name="Home" component={Home} />
       <Tab.Screen name="Journal" component={Journal} />
       <Tab.Screen name="Workouts" component={Workout} />
-    
     </Tab.Navigator>
   );
 }
@@ -71,8 +70,9 @@ export default function Layout() {
         name="JournalDetails"
         component={require("./journalDetails").default} // Dynamically load the screen
         options={{
-          headerShown: true, // Show a header for the details page
           title: "Journal Details", // Set a title for the header
+          presentation: "modal", // Makes it consistent with other modals
+          headerShown: false,
         }}
       />
     </Stack.Navigator>
