@@ -181,12 +181,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#E9C46A",
-    paddingHorizontal: 16, // Add padding on both sides of the screen
-    paddingTop: 24, // Adjust the top padding for a balanced look
+    paddingHorizontal: 16,
+    paddingTop: 24,
   },
   scrollContainer: {
     flexGrow: 1,
-    //justifyContent: "space-between",
     paddingHorizontal: 16,
     paddingTop: 24,
   },
@@ -197,24 +196,26 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 16,
     color: "white",
+    fontFamily: "MontserratAlternates",
   },
   subtitle: {
     fontSize: 18,
     color: "white",
     textAlign: "center",
-    marginBottom: 32, // Add more space below the subtitle
+    marginBottom: 32,
+    fontFamily: "MontserratAlternates",
   },
   overview: {
     flexDirection: "row",
     justifyContent: "space-between",
-    marginVertical: 16, // Space between the overview and other sections
+    marginVertical: 16,
   },
   box: {
     flex: 1,
     padding: 16,
     backgroundColor: "#FFFFFF",
     borderRadius: 8,
-    marginHorizontal: 8, // Add spacing between boxes
+    marginHorizontal: 8,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
@@ -224,17 +225,20 @@ const styles = StyleSheet.create({
   },
   boxTitle: {
     fontSize: 16,
-    fontWeight: "bold",
+    fontWeight: "bold", // Keep titles bold
     marginBottom: 8,
+    fontFamily: "MontserratAlternates",
   },
   streak: {
     fontSize: 14,
     marginBottom: 8,
+    fontFamily: "MontserratRegular", // Use regular font for content
   },
   reflection: {
     fontSize: 12,
     textAlign: "center",
     marginBottom: 16,
+    fontFamily: "MontserratRegular", // Use regular font for content
   },
   button: {
     backgroundColor: "#007BFF",
@@ -246,13 +250,14 @@ const styles = StyleSheet.create({
     color: "#FFFFFF",
     fontSize: 14,
     textAlign: "center",
+    fontFamily: "MontserratAlternates",
   },
   quoteContainer: {
     backgroundColor: "#FFFFFF",
     padding: 16,
     borderRadius: 8,
-    marginHorizontal: 8, // Ensure some padding around the quote container
-    marginTop: 32, // Push the quote section further down
+    marginHorizontal: 8,
+    marginTop: 32,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -263,11 +268,21 @@ const styles = StyleSheet.create({
     fontStyle: "italic",
     textAlign: "center",
     fontSize: 16,
+    fontFamily: "MontserratRegular", // Use regular font for content
   },
   quoteAuthor: {
     textAlign: "right",
     fontStyle: "italic",
     marginTop: 8,
+    fontFamily: "MontserratRegular", // Use regular font for content
+  },
+  regenerateButtonText: {
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    fontFamily: "MontserratRegular",
   },
 });
 

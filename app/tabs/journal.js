@@ -1,3 +1,4 @@
+import React, { useState, useEffect, useCallback } from "react";
 import {
   StyleSheet,
   Text,
@@ -7,18 +8,21 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { useState, useEffect, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 
 import db from "@/database/db";
 import JournalComponent from "@/components/JournalComponent";
 import { useNavigation } from "expo-router";
+import * as Font from "expo-font";
 
 const { width, height } = Dimensions.get("window");
 
-export default function Journal() {
+const Journal = () => {
   const navigation = useNavigation();
   const [entry, setEntry] = useState(null); // Where journal entries are stored
+  const [fontsLoaded] = Font.useFonts({
+    MontserratAlternates: require("../../assets/Montserrat_Alternates/MontserratAlternates-ExtraBold.ttf"),
+  });
 
   const fetchData = async () => {
     try {
@@ -42,15 +46,24 @@ export default function Journal() {
     }, [])
   );
 
+  if (!fontsLoaded) {
+    return <Text>Loading Fonts...</Text>;
+  }
+
   /* If else statement for rendering */
+  let contentDisplayed;
   if (entry == null) {
     contentDisplayed = <Text style={styles.loadDataText}>Getting Data...</Text>;
   } else {
     contentDisplayed = (
       <SafeAreaView style={styles.entryListContainer}>
-        <View style={styles.headerContentContainer}>
-          <Text style={styles.headerJournalTxt}>My Journals</Text>
-        </View>
+        {/* Title and Subtitle */}
+        <Text style={[styles.title, { fontFamily: "MontserratAlternates" }]}>
+          Your Mental Wellness Journey
+        </Text>
+        <Text style={[styles.subtitle, { fontFamily: "MontserratRegular" }]}>
+          Document your reflections and track your progress
+        </Text>
 
         <FlatList
           data={entry}
@@ -87,34 +100,29 @@ export default function Journal() {
   return (
     <SafeAreaView style={styles.container}>{contentDisplayed}</SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#8AB17D",
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  headerContentContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    marginTop: 20,
-    marginBottom: 20,
     backgroundColor: "#8AB17D",
+    padding: 16,
   },
-  headerJournalTxt: {
+  title: {
+    fontSize: 28,
+    fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 24,
+    marginBottom: 16,
     color: "white",
-    fontWeight: 'bold',
-    fontSize: "30",
     fontFamily: "MontserratAlternates",
   },
-  subheaderJournalTxt: {
+  subtitle: {
     fontSize: 18,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 24,
     color: "white",
+    textAlign: "center",
+    marginBottom: 32,
+    fontFamily: "MontserratAlternates",
   },
   loadDataText: {
     color: "white",
@@ -124,7 +132,6 @@ const styles = StyleSheet.create({
   entryListContainer: {
     flex: 1,
     width: "100%",
-    backgroundColor: "#8AB17D",
   },
   addButton: {
     position: "absolute",
@@ -148,3 +155,5 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
+
+export default Journal;
